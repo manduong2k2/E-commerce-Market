@@ -42,6 +42,6 @@ class Product extends Model
 
     public function status(): BelongsTo
     {
-        return $this->belongsTo(ProductStatus::class);
+        return $this->belongsTo(ProductStatus::class, 'status_id');
     }
 }

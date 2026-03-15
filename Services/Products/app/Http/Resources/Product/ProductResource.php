@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\Category\CategoryShortResourceCollection;
 use App\Http\Resources\Brand\BrandShortResource;
+use App\Http\Resources\Product\Status\ProductStatusResource;
+use App\Http\Resources\Product\Variant\ProductVariantResource;
 
 class ProductResource extends JsonResource
 {
@@ -18,6 +20,7 @@ class ProductResource extends JsonResource
             'categories'    => new CategoryShortResourceCollection($this->categories),
             'brand'         => new BrandShortResource($this->brand),
             'variants'      => ProductVariantResource::collection($this->variants),
+            'status'        => new ProductStatusResource($this->status),
             'files'         => $this->getFiles(),
             'createdAt'     => $this->created_at?->toDateTimeString(),
             'updatedAt'     => $this->updated_at?->toDateTimeString(),

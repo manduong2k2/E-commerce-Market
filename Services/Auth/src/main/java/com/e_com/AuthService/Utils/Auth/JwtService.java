@@ -92,6 +92,7 @@ public class JwtService {
         return Jwts.builder()
                 .setId(jti)
                 .setSubject(String.valueOf(user.getId()))
+                .claim("roles", user.getRoles().stream().map(role -> role.getCode()).toArray())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(refreshTokenExpiration)))
                 .signWith(privateKey, SignatureAlgorithm.RS256)

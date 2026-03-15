@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\Product;
+namespace App\Http\Resources\Product\Variant;
 
 use App\Http\Resources\ExtraAttribute\ExtraAttributeResource;
 use Illuminate\Http\Request;
