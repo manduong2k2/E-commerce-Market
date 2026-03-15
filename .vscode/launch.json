@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-EComProductServicesApplication<E-com_Product_Services>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.example.E_com_Product_Services.EComProductServicesApplication",
+            "projectName": "E-com_Product_Services",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

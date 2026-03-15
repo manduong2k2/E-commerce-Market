@@ -1,0 +1,26 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    - name: Setup SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H jul2nd.myvnc.com >> ~/.ssh/known_hosts
+
+    - name: Deploy - Pull from Git
+      run: |
+        ssh -o StrictHostKeyChecking=no mandu@jul2nd.myvnc.com "cd C:/Users/mandu/Desktop/E-com && git pull origin main"
+

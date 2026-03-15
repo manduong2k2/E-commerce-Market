@@ -1,0 +1,24 @@
+package com.e_com.AuthService.Validation;
+
+import jakarta.validation.constraints.*;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class ResetPasswordRequest {
+
+    @NotBlank(message = "email must not be empty")
+    @Size(max = 255, message = "Email must not exceed 255 characters")
+    private String email;
+
+    @NotBlank(message = "token must not be empty")
+    private String token;
+
+    @NotBlank(message = "password must not be empty")
+    @Size(min = 6, max = 100, message = "Password must be between 6 and 100 characters")
+    private String newPassword;
+}
