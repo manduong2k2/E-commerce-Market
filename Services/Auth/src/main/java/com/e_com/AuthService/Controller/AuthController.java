@@ -100,6 +100,7 @@ public class AuthController {
         return new ProfileResponse(user);
     }
 
+    @Authenticated
     @PostMapping("/logout")
     public ResponseEntity<HashMap<String, Object>> logout(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();

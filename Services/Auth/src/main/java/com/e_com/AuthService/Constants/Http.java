@@ -3,7 +3,6 @@ package com.e_com.AuthService.Constants;
 public final class Http {
 
     private Http() {
-        // private constructor để không thể khởi tạo
     }
 
     // HTTP Status Codes

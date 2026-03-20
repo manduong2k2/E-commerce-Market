@@ -1,20 +1,34 @@
 <?php
+namespace App\Queues\Consumers;
 
-namespace App\Utils;
-
-use Illuminate\Support\Facades\Log;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
-class RabbitMQConsumer
+abstract class BaseConsumer
 {
-    protected $connection;
+    protected AMQPStreamConnection $connection;
     protected $channel;
-    protected $queue;
+    protected string $queue;
+    protected $handler;
+
+    public abstract function getHandler(): string;
+
+    private function setHandler()
+    {
+        $this->handler = app($this->getHandler());
+    }
+
+    public abstract function getQueue(): string;
+
+    private function setQueue()
+    {
+        $this->queue = $this->getQueue();
+    }
 
     public function __construct()
     {
-        $this->queue = env('RABBITMQ_QUEUE', 'test.queue');
+        $this->setHandler();
+        $this->setQueue();
 
         $this->connection = new AMQPStreamConnection(
             config('rabbit-mq.host'),
@@ -25,42 +39,21 @@ class RabbitMQConsumer
         );
 
         $this->channel = $this->connection->channel();
-
-        // Đảm bảo queue tồn tại
         $this->channel->queue_declare($this->queue, false, true, false, false);
     }
 
-    public function consume()
+    public function consume(): void
     {
         echo " [*] Waiting for messages in {$this->queue}. To exit press CTRL+C\n";
 
         $callback = function (AMQPMessage $msg) {
-            $data = json_decode($msg->getBody(), true);
-
-            // Xử lý message ở đây
-            echo " [x] Received: " . $msg->getBody() . "\n";
-
-            // Ví dụ lưu vào log Laravel
-            Log::info('RabbitMQ message received', $data ?? []);
-
-            // Xác nhận message đã được xử lý
+            $this->handler->execute($msg);
             $msg->ack();
         };
 
-        // Chỉ nhận 1 message 1 lần (fair dispatch)
         $this->channel->basic_qos(null, 1, null);
+        $this->channel->basic_consume($this->queue, '', false, false, false, false, $callback);
 
-        $this->channel->basic_consume(
-            $this->queue,
-            '',
-            false,
-            false,
-            false,
-            false,
-            $callback
-        );
-
-        // Loop để consumer luôn lắng nghe
         while ($this->channel->is_open()) {
             $this->channel->wait();
         }

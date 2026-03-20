@@ -1,5 +1,6 @@
 package com.e_com.AuthService.Service;
 
+import com.e_com.AuthService.Constants.Queue;
 import com.e_com.AuthService.Contract.IAuthService;
 import com.e_com.AuthService.Entity.Role;
 import com.e_com.AuthService.Model.User;
@@ -37,6 +38,9 @@ public class AuthService implements IAuthService {
 
     @Autowired
     public EmailVerificationTokenService emailVerificationTokenService;
+
+    @Autowired
+    private MessagePublisher messagePublisher;
 
     @Transactional
     public RegisterResponse register(RegisterRequest req) {
@@ -132,5 +136,14 @@ public class AuthService implements IAuthService {
 
     public void logout(String key, String token) {
         tokenService.invalidateToken(token);
+
+        var message = String.format(
+                "{\"action\":\"logout\",\"token\":\"%s\",\"key\":\"%s\",\"timestamp\":\"%s\"}",
+                token,
+                key,
+                java.time.Instant.now().toString()
+        );
+
+        messagePublisher.sendMessage(message, Queue.LOGOUT);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Constants\ResponseMessage;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
@@ -9,9 +10,7 @@ use Throwable;
 
 class GlobalExceptionHandler
 {
-    public function report(Throwable $e): void
-    {
-    }
+    public function report(Throwable $e): void {}
 
     public function render(Throwable $e, $request)
     {
@@ -24,9 +23,10 @@ class GlobalExceptionHandler
         }
 
         $appFrames = collect($e->getTrace())
-            ->filter(fn ($frame) =>
+            ->filter(
+                fn($frame) =>
                 isset($frame['file']) &&
-                str_contains($frame['file'], DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR)
+                    str_contains($frame['file'], DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR)
             )
             ->values();
 
@@ -36,11 +36,17 @@ class GlobalExceptionHandler
             $statusCode = $e->getStatusCode();
         }
 
+        if ($statusCode = 401) {
+            return response()->json([
+                'message'   => ResponseMessage::UNAUTHENTICATED
+            ], $statusCode);
+        }
+
         if (!app()->environment('production')) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
-                'trace'   => $appFrames->map(fn ($f) => [
+                'trace'   => $appFrames->map(fn($f) => [
                     'file' => $f['file'],
                     'line' => $f['line'] ?? null,
                 ]),

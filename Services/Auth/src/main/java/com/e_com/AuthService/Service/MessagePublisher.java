@@ -9,14 +9,11 @@ public class MessagePublisher {
 
     private final RabbitTemplate rabbitTemplate;
 
-    @Value("${rabbitmq.queue}")
-    private String queueName;
-
     public MessagePublisher(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    public void sendMessage(String message) {
-        rabbitTemplate.convertAndSend(queueName, message);
+    public void sendMessage(String message, String queue) {
+        rabbitTemplate.convertAndSend(queue, message);
     }
 }
