@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use App\Facades\HttpClient;
+use App\Facades\HttpClientInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -18,6 +20,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->registerServices();
+        $this->app->singleton(HttpClientInterface::class, HttpClient::class);
     }
 
     /**

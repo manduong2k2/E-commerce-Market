@@ -36,7 +36,7 @@ class GlobalExceptionHandler
             $statusCode = $e->getStatusCode();
         }
 
-        if ($statusCode = 401) {
+        if ($statusCode === 401) {
             return response()->json([
                 'message'   => ResponseMessage::UNAUTHENTICATED
             ], $statusCode);

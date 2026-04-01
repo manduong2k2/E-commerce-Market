@@ -37,11 +37,11 @@ class ApiUserProvider implements UserProvider
 
             $user = new User([
                 'id' => $payload->get('sub'),
-                'roles' => $payload->get('roles', [])
+                'roles' => $payload->get('roles', []),
+                'token' => $token
             ]);
 
             return $user;
-
         } catch (JWTException $e) {
             throw $e;
         }

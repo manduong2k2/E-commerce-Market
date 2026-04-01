@@ -21,7 +21,7 @@ class LogoutHandler implements LogoutHandlerInterface
         try {
             JWTAuth::setToken($token)->invalidate();
         } catch (\Exception $e) {
-            
+            return;
         }
     }
 }

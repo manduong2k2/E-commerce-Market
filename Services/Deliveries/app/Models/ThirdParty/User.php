@@ -10,6 +10,7 @@ use InvalidArgumentException;
 class User implements Authenticatable, JWTSubject
 {
     private string $id;
+    private string $token;
     private ?string $name;
     private ?string $email;
     private ?string $phone;
@@ -31,6 +32,7 @@ class User implements Authenticatable, JWTSubject
         $this->phone     = Arr::get($data, 'phone');
         $this->status    = Arr::get($data, 'status');
         $this->createdAt = Arr::get($data, 'createdAt');
+        $this->token     = Arr::get($data, 'token');
         $this->roles     = Arr::get($data, 'roles') ??  [];
     }
 
@@ -109,6 +111,11 @@ class User implements Authenticatable, JWTSubject
     public function getRoles(): array
     {
         return $this->roles;
+    }
+
+    public function getToken(): string
+    {
+        return $this->token;
     }
 
     public function hasRole(string $role): bool

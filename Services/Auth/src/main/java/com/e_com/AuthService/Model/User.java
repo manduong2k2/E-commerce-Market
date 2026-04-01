@@ -12,33 +12,27 @@ import java.time.LocalDateTime;
 public class User {
     private UUID id;
     private String email;
-    private String password;
-    private String name;
-    private String phone;
+    private String password;    
     private String status;
     private Set<Role> roles;
     private LocalDateTime createdAt;
 
-    public User(String email, String password, String name, String phone, String status, Set<Role> roles) {
+    public User(String email, String password, String status, Set<Role> roles) {
         this.email = email;
         this.password = password;
-        this.name = name;
-        this.phone = phone;
         this.status = status;
         this.roles = roles;
     }
 
-    public User(UUID id, String email, String password, String name, String phone, String status, LocalDateTime createdAt) {
+    public User(UUID id, String email, String password, String status, LocalDateTime createdAt) {
         this.id = id;
         this.email = email;
         this.password = password;
-        this.name = name;
-        this.phone = phone;
         this.status = status;
         this.createdAt = createdAt;
     }
 
     public com.e_com.AuthService.Entity.User toEntity() {
-        return new com.e_com.AuthService.Entity.User(email, password, name, phone, status);
+        return new com.e_com.AuthService.Entity.User(email, password, status);
     }
 }

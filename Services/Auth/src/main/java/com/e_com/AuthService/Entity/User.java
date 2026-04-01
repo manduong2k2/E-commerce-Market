@@ -3,7 +3,6 @@ package com.e_com.AuthService.Entity;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Nationalized;
 import org.hibernate.annotations.SoftDelete;
 import org.hibernate.annotations.SoftDeleteType;
 
@@ -28,13 +27,6 @@ public class User {
     @Column(columnDefinition = "varchar(200)", nullable = false)
     private String password;
 
-    @Column(columnDefinition = "varchar(255)", nullable = false)
-    @Nationalized
-    private String name;
-
-    @Column(columnDefinition = "varchar(20)", nullable = true)
-    private String phone;
-
     @Column(columnDefinition = "varchar(20) default 'ACTIVE'", nullable = true)
     private String status;
 
@@ -53,15 +45,13 @@ public class User {
     protected User() {
     }
 
-    public User(String email, String password, String name, String phone, String status) {
+    public User(String email, String password, String status) {
         this.email = email;
         this.password = password;
-        this.name = name;
-        this.phone = phone;
         this.status = status;
     }
 
     public com.e_com.AuthService.Model.User toDomain() {
-        return new com.e_com.AuthService.Model.User(id, email, password, name, phone, status, roles.stream().map(Role::toDomain).collect(java.util.stream.Collectors.toSet()), createdAt);
+        return new com.e_com.AuthService.Model.User(id, email, password, status, roles.stream().map(Role::toDomain).collect(java.util.stream.Collectors.toSet()), createdAt);
     }
 }

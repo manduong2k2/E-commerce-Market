@@ -13,6 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -27,6 +28,16 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
+                .body(errors);
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<?> handleResponseStatus(ResponseStatusException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("message", ex.getReason());
+
+        return ResponseEntity
+                .status(ex.getStatusCode())
                 .body(errors);
     }
 

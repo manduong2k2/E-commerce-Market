@@ -13,12 +13,10 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-@JsonPropertyOrder({"id", "email", "name", "phone", "status", "role", "createdAt" })
+@JsonPropertyOrder({"id", "email", "status", "role", "createdAt" })
 public class ProfileResponse {
     private UUID id;
     private String email;
-    private String name;
-    private String phone;
     private String status;
     private Set<Role> roles;
     private LocalDateTime createdAt;
@@ -26,8 +24,6 @@ public class ProfileResponse {
     public ProfileResponse(User user) {
         this.id = user.getId();
         this.email = user.getEmail();
-        this.name = user.getName();
-        this.phone = user.getPhone();
         this.status = user.getStatus();
         this.roles = user.getRoles();
         this.createdAt = user.getCreatedAt();

@@ -1,6 +1,8 @@
 package com.e_com.AuthService.Entity;
 
-import com.e_com.AuthService.Embeddable.EmailVerifyTokenId;
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,6 +13,18 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EmailVerifyToken {
-    @EmbeddedId
-    private EmailVerifyTokenId id;
+    @Id
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
+    
+    @Column(name = "token", nullable = false)
+    private String token;
+    
+    @Column(name = "created_at", nullable = false)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+    
+    @Column(name = "expires_at", nullable = false)
+    private LocalDateTime expiresAt;
 }
+

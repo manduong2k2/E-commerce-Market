@@ -1,6 +1,7 @@
 <?php
 namespace App\Queues\Consumers;
 
+use App\Queues\Connections\BaseConnection;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -29,15 +30,7 @@ abstract class BaseConsumer
     {
         $this->setHandler();
         $this->setQueue();
-
-        $this->connection = new AMQPStreamConnection(
-            config('rabbit-mq.host'),
-            config('rabbit-mq.port'),
-            config('rabbit-mq.login'),
-            config('rabbit-mq.password'),
-            config('rabbit-mq.vhost')
-        );
-
+        $this->connection = BaseConnection::make();
         $this->channel = $this->connection->channel();
         $this->channel->queue_declare($this->queue, false, true, false, false);
     }

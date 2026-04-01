@@ -17,10 +17,12 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class AuthService implements IAuthService {
@@ -44,8 +46,7 @@ public class AuthService implements IAuthService {
 
     @Transactional
     public RegisterResponse register(RegisterRequest req) {
-        var user = new User(null, req.getEmail(), encoder.encode(req.getPassword()), req.getName(), req.getPhone(),
-                "INACTIVE", LocalDateTime.now());
+        var user = new User(null, req.getEmail(), encoder.encode(req.getPassword()), "INACTIVE", LocalDateTime.now());
         var userEntity = user.toEntity();
         var clientRole = this.roleRepo.findByCode("CLI_USER");
         var roles = new java.util.HashSet<Role>();
@@ -61,9 +62,9 @@ public class AuthService implements IAuthService {
     public AuthResponse activeUser(String email, String token) {
         boolean verified = emailVerificationTokenService.verify(email, token);
         if (!verified)
-            throw new RuntimeException("Invalid verification link");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid or expired verification link");
 
-        var user = repo.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        var user = repo.findByEmail(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
         user.setStatus("ACTIVE");
         repo.save(user);
         return new AuthResponse(tokenService.generateAccessToken(user.toDomain()),
@@ -95,10 +96,10 @@ public class AuthService implements IAuthService {
     public AuthResponse refreshToken(RefreshTokenRequest req) {
         var claims = tokenService.verifyToken(req.getRefreshToken());
         if (claims == null)
-            throw new RuntimeException("Invalid refresh token");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid refresh token");
 
         var user = repo.findById(UUID.fromString(claims.getSubject()))
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         return new AuthResponse(tokenService.generateAccessToken(user.toDomain()),
                 tokenService.generateRefreshToken(user.toDomain()),
@@ -106,7 +107,7 @@ public class AuthService implements IAuthService {
     }
 
     public boolean sendActivationEmail(String email) {
-        String token = UUID.randomUUID().toString();
+        String token = UUID.randomUUID().toString(); //switch
 
         emailVerificationTokenService.createToken(email, token);
         emailVerificationTokenService.sendVerifyEmail(email, token);
@@ -124,10 +125,10 @@ public class AuthService implements IAuthService {
     public boolean resetPassword(String email, String token, String newPassword) {
         var verified = emailVerificationTokenService.verify(email, token);
         if (!verified)
-            throw new RuntimeException("Invalid verification link");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid or expired verification link");
 
         var user = repo.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         user.setPassword(encoder.encode(newPassword));
         repo.save(user);

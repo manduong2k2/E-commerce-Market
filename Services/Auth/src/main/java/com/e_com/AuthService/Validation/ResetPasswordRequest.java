@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResetPasswordRequest {
-
     @NotBlank(message = "email must not be empty")
     @Size(max = 255, message = "Email must not exceed 255 characters")
     private String email;
