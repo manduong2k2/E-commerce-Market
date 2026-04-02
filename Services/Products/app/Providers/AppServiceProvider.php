@@ -20,6 +20,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->registerServices();
+        $this->registerRepositories();
         $this->app->singleton(HttpClientInterface::class, HttpClient::class);
     }
 
@@ -66,6 +67,25 @@ class AppServiceProvider extends ServiceProvider
 
             if (interface_exists($interfaceClass) && class_exists($serviceClass)) {
                 $this->app->bind($interfaceClass, $serviceClass);
+            }
+        }
+    }
+
+    protected function registerRepositories(): void
+    {
+        $repositoryPath = app_path('Http/Repositories');
+        $namespace = 'App\\Http\\Repositories\\';
+
+        foreach (scandir($repositoryPath) as $file) {
+            if (!Str::endsWith($file, 'Repository.php')) {
+                continue;
+            }
+
+            $repositoryClass = $namespace . pathinfo($file, PATHINFO_FILENAME);
+            $interfaceClass = $namespace . pathinfo($file, PATHINFO_FILENAME) . 'Interface';
+
+            if (interface_exists($interfaceClass) && class_exists($repositoryClass)) {
+                $this->app->bind($interfaceClass, $repositoryClass);
             }
         }
     }

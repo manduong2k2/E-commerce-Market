@@ -2,11 +2,11 @@
 
 namespace App\Http\Services;
 
-use App\Http\Repositories\CategoryRepository;
+use App\Http\Repositories\CategoryRepositoryInterface;
 
 class CategoryService implements CategoryServiceInterface
 {
-    public function __construct(protected CategoryRepository $CategoryRepository)
+    public function __construct(protected CategoryRepositoryInterface $CategoryRepository)
     {
     }
 

@@ -2,12 +2,12 @@
 
 namespace App\Http\Services;
 
-use App\Http\Repositories\OrderRepository;
+use App\Http\Repositories\OrderRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 
 class OrderService implements OrderServiceInterface
 {
-    public function __construct(protected OrderRepository $OrderRepository) {}
+    public function __construct(protected OrderRepositoryInterface $OrderRepository) {}
 
     public function getAllOrders(array $conditions)
     {

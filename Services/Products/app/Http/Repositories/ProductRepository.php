@@ -3,7 +3,7 @@ namespace App\Http\Repositories;
 
 use App\Models\Product;
 
-class ProductRepository extends EloquentRepository
+class ProductRepository extends EloquentRepository implements ProductRepositoryInterface
 {
     public function getModel(): string
     {

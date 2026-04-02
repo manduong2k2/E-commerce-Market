@@ -3,7 +3,7 @@ namespace App\Http\Repositories;
 
 use App\Models\Cart;
 
-class CartRepository extends EloquentRepository
+class CartRepository extends EloquentRepository implements CartRepositoryInterface
 {
     public function getModel(): string
     {

@@ -2,12 +2,12 @@
 
 namespace App\Http\Services;
 
-use App\Http\Repositories\ProductRepository;
+use App\Http\Repositories\ProductRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 
 class ProductService implements ProductServiceInterface
 {
-    public function __construct(protected ProductRepository $ProductRepository) {}
+    public function __construct(protected ProductRepositoryInterface $ProductRepository) {}
 
     public function getAllProducts(array $conditions)
     {

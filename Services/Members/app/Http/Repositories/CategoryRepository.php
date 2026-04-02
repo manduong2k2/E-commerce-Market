@@ -3,7 +3,7 @@ namespace App\Http\Repositories;
 
 use App\Models\Category;
 
-class CategoryRepository extends EloquentRepository
+class CategoryRepository extends EloquentRepository implements CategoryRepositoryInterface
 {
     public function getModel(): string
     {

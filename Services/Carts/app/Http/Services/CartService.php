@@ -3,7 +3,7 @@
 namespace App\Http\Services;
 
 use App\Facades\HttpClientInterface;
-use App\Http\Repositories\CartRepository;
+use App\Http\Repositories\CartRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
@@ -11,7 +11,7 @@ use Illuminate\Support\Arr;
 class CartService implements CartServiceInterface
 {
     public function __construct(
-        protected CartRepository $cartRepository,
+        protected CartRepositoryInterface $cartRepository,
         protected HttpClientInterface $client
     ) {}
 

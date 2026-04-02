@@ -3,7 +3,7 @@ namespace App\Http\Repositories;
 
 use App\Models\Brand;
 
-class BrandRepository extends EloquentRepository
+class BrandRepository extends EloquentRepository implements BrandRepositoryInterface
 {
     public function getModel(): string
     {

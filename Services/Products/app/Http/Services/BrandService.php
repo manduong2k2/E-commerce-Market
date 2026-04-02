@@ -2,11 +2,11 @@
 
 namespace App\Http\Services;
 
-use App\Http\Repositories\BrandRepository;
+use App\Http\Repositories\BrandRepositoryInterface;
 
 class BrandService implements BrandServiceInterface
 {
-    public function __construct(protected BrandRepository $brandRepository)
+    public function __construct(protected BrandRepositoryInterface $brandRepository)
     {
     }
 
