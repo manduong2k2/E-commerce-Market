@@ -8,6 +8,7 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = ExistValidator.class)
+@Repeatable(ExistList.class)
 public @interface Exist {
 
     String message() default "Value not exists";

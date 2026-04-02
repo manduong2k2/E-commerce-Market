@@ -8,6 +8,7 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = UniqueValidator.class)
+@Repeatable(UniqueList.class)
 public @interface Unique {
 
     String message() default "Value already exists";

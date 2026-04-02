@@ -61,10 +61,6 @@ public class AuthService implements IAuthService {
     }
 
     public AuthResponse activeUser(String email, String token) {
-        boolean verified = emailVerificationTokenService.verify(email, token);
-        if (!verified)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid or expired verification link");
-
         var user = repo.findByEmail(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
         user.setStatus("ACTIVE");
         repo.save(user);
@@ -124,10 +120,6 @@ public class AuthService implements IAuthService {
     }
 
     public boolean resetPassword(String email, String token, String newPassword) {
-        var verified = emailVerificationTokenService.verify(email, token);
-        if (!verified)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid or expired verification link");
-
         var user = repo.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 

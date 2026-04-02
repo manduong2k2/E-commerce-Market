@@ -30,16 +30,7 @@ public class AuthController {
     @Autowired
     private IAuthService auth;
 
-    @PostMapping("/register")
-    public RegisterResponse register(@Valid @RequestBody(required = false) RegisterRequest req) throws MessagingException {
-        return auth.register(req);
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<HashMap<String, Object>> login(@Valid @RequestBody(required = false) LoginRequest req) {
-
-        var authRes = auth.login(req);
-
+    private ResponseEntity<HashMap<String, Object>> createAuthResponse(AuthResponse authRes) {
         ResponseCookie accessCookie = ResponseCookie.from("ACCESS_TOKEN", authRes.getAccessToken())
                 .httpOnly(true) // JS không truy cập
                 .path("/") // scope cookie
@@ -64,18 +55,33 @@ public class AuthController {
                 .body(response);
     }
 
+    @PostMapping("/register")
+    public RegisterResponse register(@Valid @RequestBody(required = false) RegisterRequest req)
+            throws MessagingException {
+        return auth.register(req);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<HashMap<String, Object>> login(@Valid @RequestBody(required = false) LoginRequest req) {
+        var authRes = auth.login(req);
+        return createAuthResponse(authRes);
+    }
+
     @PostMapping("/refresh-token")
-    public AuthResponse refreshToken(@Valid @RequestBody(required = false) RefreshTokenRequest req) {
-        return auth.refreshToken(req);
+    public ResponseEntity<HashMap<String, Object>> refreshToken(@Valid @RequestBody(required = false) RefreshTokenRequest req) {
+        var authRes = auth.refreshToken(req);
+        return createAuthResponse(authRes);
     }
 
     @GetMapping("/verify-email")
-    public AuthResponse activeUser(@RequestParam String email, @RequestParam String token) {
-        return auth.activeUser(email, token);
+    public ResponseEntity<HashMap<String, Object>> activeUser(@Valid @ModelAttribute ActivateUserRequest request) {
+        var authRes = auth.activeUser(request.getEmail(), request.getToken());
+        return createAuthResponse(authRes);
     }
 
     @PostMapping("/forgot-password")
-    public String forgotPassword(@Valid @RequestBody(required = false) ForgotPasswordRequest req) throws MessagingException {
+    public String forgotPassword(@Valid @RequestBody(required = false) ForgotPasswordRequest req)
+            throws MessagingException {
         boolean sent = auth.sendResetPasswordEmail(req.getEmail());
         if (sent) {
             return "A password reset link has been sent to your email address.";
@@ -117,7 +123,7 @@ public class AuthController {
                 }
 
                 if (accessToken != null && refreshToken != null) {
-                    break; 
+                    break;
                 }
             }
         }
@@ -125,24 +131,8 @@ public class AuthController {
         auth.logout(Http.ACCESS_TOKEN_COOKIE, accessToken);
         auth.logout(Http.REFRESH_TOKEN_COOKIE, refreshToken);
 
-        ResponseCookie accessCookie = ResponseCookie.from("ACCESS_TOKEN", "")
-                .httpOnly(true)
-                .path("/")
-                .maxAge(0)
-                .sameSite("Strict")
-                .build();
+        AuthResponse authResponse = new AuthResponse(null, null, true);
 
-        ResponseCookie refreshCookie = ResponseCookie.from("REFRESH_TOKEN", "")
-                .httpOnly(true)
-                .path("/")
-                .maxAge(0)
-                .sameSite("Strict")
-                .build();
-        HashMap<String, Object> response = new HashMap<>();
-        response.put("success", true);
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, accessCookie.toString())
-                .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
-                .body(response);
+        return createAuthResponse(authResponse);
     }
 }
