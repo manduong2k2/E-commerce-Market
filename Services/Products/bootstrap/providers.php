@@ -2,5 +2,5 @@
 
 return [
     App\Providers\AppServiceProvider::class,
-    App\Providers\Rabbit\Provider\RabbitMqHandlerProvider::class,
+    App\Queues\Providers\RabbitMqHandlerProvider::class,
 ];
