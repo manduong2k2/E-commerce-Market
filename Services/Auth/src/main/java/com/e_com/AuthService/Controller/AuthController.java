@@ -10,6 +10,7 @@ import com.e_com.AuthService.Response.RegisterResponse;
 import com.e_com.AuthService.Utils.Auth.ContextHolder;
 import com.e_com.AuthService.Validation.*;
 
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -30,7 +31,7 @@ public class AuthController {
     private IAuthService auth;
 
     @PostMapping("/register")
-    public RegisterResponse register(@Valid @RequestBody(required = false) RegisterRequest req) {
+    public RegisterResponse register(@Valid @RequestBody(required = false) RegisterRequest req) throws MessagingException {
         return auth.register(req);
     }
 
@@ -74,7 +75,7 @@ public class AuthController {
     }
 
     @PostMapping("/forgot-password")
-    public String forgotPassword(@Valid @RequestBody(required = false) ForgotPasswordRequest req) {
+    public String forgotPassword(@Valid @RequestBody(required = false) ForgotPasswordRequest req) throws MessagingException {
         boolean sent = auth.sendResetPasswordEmail(req.getEmail());
         if (sent) {
             return "A password reset link has been sent to your email address.";

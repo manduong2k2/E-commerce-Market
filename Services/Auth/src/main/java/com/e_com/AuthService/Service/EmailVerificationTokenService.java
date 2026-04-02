@@ -3,17 +3,21 @@ package com.e_com.AuthService.Service;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
-import com.e_com.AuthService.Embeddable.EmailVerifyTokenId;
 import com.e_com.AuthService.Entity.EmailVerifyToken;
 import com.e_com.AuthService.Repository.IEmailVerifyTokenRepository;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -24,6 +28,13 @@ public class EmailVerificationTokenService {
 
     @Autowired
     public PasswordEncoder encoder;
+
+    private final JavaMailSender mailSender;
+
+    private final SpringTemplateEngine templateEngine;
+
+    @Value("${spring.application.base-url}")
+    private String baseUrl;
 
     @Transactional
     public void createToken(String email, String token) {
@@ -54,33 +65,39 @@ public class EmailVerificationTokenService {
         return true;
     }
 
-    private final JavaMailSender mailSender;
-
     @Async
-    public void sendVerifyEmail(String toEmail, String token) {
+    public void sendVerifyEmail(String toEmail, String token) throws MessagingException {
+        String link = baseUrl + "/api/auth/verify-email?email=" + toEmail + "&token=" + token;
 
-        String link = "http://localhost:8080/api/auth/verify-email?email="
-                + toEmail + "&token=" + token;
+        Context context = new Context();
+        context.setVariable("link", link);
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(toEmail);
-        message.setSubject("Verify your email");
-        message.setText("Click here to verify your email: " + link);
+        String htmlContent = templateEngine.process("mails/activate_account.html", context);
+        
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+        helper.setTo(toEmail);
+        helper.setSubject("Activate your account");
+        helper.setText(htmlContent, true);
 
-        mailSender.send(message);
+        mailSender.send(mimeMessage);
     }
 
     @Async
-    public void sendResetPasswordEmail(String toEmail, String token) {
+    public void sendResetPasswordEmail(String toEmail, String token) throws MessagingException {
+        String link = baseUrl + "/api/auth/reset-password?email=" + toEmail + "&token=" + token;
 
-        String link = "http://localhost:8080/api/auth/reset-password?email="
-                + toEmail + "&token=" + token;
+        Context context = new Context();
+        context.setVariable("link", link);
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(toEmail);
-        message.setSubject("Reset your password");
-        message.setText("Click here to reset your password: " + link);
+        String htmlContent = templateEngine.process("mails/reset_password.html", context);
+        
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+        helper.setTo(toEmail);
+        helper.setSubject("Reset your password");
+        helper.setText(htmlContent, true);
 
-        mailSender.send(message);
+        mailSender.send(mimeMessage);
     }
 }

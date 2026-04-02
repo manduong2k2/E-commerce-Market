@@ -11,6 +11,7 @@ import com.e_com.AuthService.Response.RegisterResponse;
 import com.e_com.AuthService.Utils.Auth.JwtService;
 import com.e_com.AuthService.Validation.*;
 
+import jakarta.mail.MessagingException;
 import lombok.experimental.var;
 
 import java.time.LocalDateTime;
@@ -45,7 +46,7 @@ public class AuthService implements IAuthService {
     private MessagePublisher messagePublisher;
 
     @Transactional
-    public RegisterResponse register(RegisterRequest req) {
+    public RegisterResponse register(RegisterRequest req) throws MessagingException {
         var user = new User(null, req.getEmail(), encoder.encode(req.getPassword()), "INACTIVE", LocalDateTime.now());
         var userEntity = user.toEntity();
         var clientRole = this.roleRepo.findByCode("CLI_USER");
@@ -106,7 +107,7 @@ public class AuthService implements IAuthService {
                 true);
     }
 
-    public boolean sendActivationEmail(String email) {
+    public boolean sendActivationEmail(String email) throws MessagingException {
         String token = UUID.randomUUID().toString(); //switch
 
         emailVerificationTokenService.createToken(email, token);
@@ -114,7 +115,7 @@ public class AuthService implements IAuthService {
         return true;
     }
 
-    public boolean sendResetPasswordEmail(String email) {
+    public boolean sendResetPasswordEmail(String email) throws MessagingException {
         String token = UUID.randomUUID().toString();
 
         emailVerificationTokenService.createToken(email, token);

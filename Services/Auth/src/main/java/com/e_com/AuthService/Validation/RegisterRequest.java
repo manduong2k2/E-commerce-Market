@@ -20,11 +20,4 @@ public class RegisterRequest {
     @NotBlank(message = "Password must not be empty")
     @Size(min = 6, max = 100, message = "Password must be between 6 and 100 characters")
     private String password;
-
-    @NotBlank(message = "Name must not be empty")
-    @Size(max = 255, message = "Name must not exceed 255 characters")
-    private String name;
-
-    @Pattern(regexp = "^\\+?[0-9]{7,15}$", message = "Phone number must be valid")
-    private String phone;
 }
