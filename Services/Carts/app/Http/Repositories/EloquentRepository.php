@@ -2,6 +2,7 @@
 
 namespace App\Http\Repositories;
 
+use Illuminate\Database\Eloquent\Collection;
 use App\Supports\Scopes\SearchScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +14,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
-abstract class EloquentRepository
+abstract class EloquentRepository implements EloquentRepositoryInterface
 {
     protected $model;
     protected $scopes;
@@ -38,7 +39,7 @@ abstract class EloquentRepository
         $this->scopes = $scopes;
     }
 
-    public function all($relations = [], array $conditions)
+    public function all(array $relations = [], array $conditions = []): Collection
     {
         $query = $this->baseQuery($relations);
 
@@ -102,12 +103,12 @@ abstract class EloquentRepository
         return $query;
     }
 
-    public function find($id)
+    public function find($id): ?Model
     {
         return $this->model::find($id);
     }
 
-    public function create(array $data)
+    public function create(array $data): Model
     {
         return DB::transaction(function () use ($data) {
 
@@ -191,7 +192,7 @@ abstract class EloquentRepository
         }
     }
 
-    public function update(Model $model, array $data)
+    public function update(Model $model, array $data): Model
     {
         return DB::transaction(function () use ($model, $data) {
 
@@ -288,7 +289,7 @@ abstract class EloquentRepository
         }
     }
 
-    public function delete(Model $model)
+    public function delete(Model $model): bool
     {
         return DB::transaction(function () use ($model) {
             return $model->delete();
