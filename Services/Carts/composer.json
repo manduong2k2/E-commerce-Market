@@ -10,11 +10,10 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "laravel/framework": "^12.0",
-        "laravel/sanctum": "^4.0",
-        "laravel/tinker": "^2.10.1",
+        "laravel/framework": "^13.0",
+        "laravel/sanctum": "*",
+        "laravel/tinker": "*",
         "php-amqplib/php-amqplib": "^3.7",
-        "spatie/laravel-medialibrary": "^11.21",
         "tymon/jwt-auth": "^2.3"
     },
     "require-dev": {
