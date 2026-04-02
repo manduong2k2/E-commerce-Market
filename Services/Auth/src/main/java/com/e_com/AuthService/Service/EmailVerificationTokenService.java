@@ -38,8 +38,13 @@ public class EmailVerificationTokenService {
 
     @Transactional
     public void createToken(String email, String token) {
+        EmailVerifyToken entity = repo.findByEmail(email);
+        if (entity != null) {
+            repo.delete(entity);
+        }
+
         String hashed = encoder.encode(token);
-        EmailVerifyToken entity = new EmailVerifyToken();
+        entity = new EmailVerifyToken();
         entity.setEmail(email);
         entity.setToken(hashed);
         entity.setExpiresAt(LocalDateTime.now().plusHours(24));

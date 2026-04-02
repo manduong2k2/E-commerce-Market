@@ -21,4 +21,7 @@ public @interface Unique {
 
     // optional: hỗ trợ soft delete
     String deletedAtColumn() default "";
+    
+    // optional: điều kiện bổ sung (ví dụ: "role_id = 1 AND status = 'active'")
+    String whereClause() default "";
 }

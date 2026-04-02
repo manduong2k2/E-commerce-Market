@@ -20,4 +20,7 @@ public @interface Exist {
     String column();
 
     String deletedAtColumn() default "";
+    
+    // optional: điều kiện bổ sung (ví dụ: "status = 'active' AND role_id = 1")
+    String whereClause() default "";
 }

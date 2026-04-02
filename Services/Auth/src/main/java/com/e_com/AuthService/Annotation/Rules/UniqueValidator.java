@@ -15,12 +15,14 @@ public class UniqueValidator implements ConstraintValidator<Unique, String> {
     private String table;
     private String column;
     private String deletedAtColumn;
+    private String whereClause;
 
     @Override
     public void initialize(Unique unique) {
         this.table = unique.table();
         this.column = unique.column();
         this.deletedAtColumn = unique.deletedAtColumn();
+        this.whereClause = unique.whereClause();
     }
 
     @Override
@@ -31,6 +33,10 @@ public class UniqueValidator implements ConstraintValidator<Unique, String> {
 
         if (deletedAtColumn != null && !deletedAtColumn.isBlank()) {
             sql += " AND " + deletedAtColumn + " IS NULL";
+        }
+        
+        if (whereClause != null && !whereClause.isBlank()) {
+            sql += " AND (" + whereClause + ")";
         }
 
         Number count = (Number) em.createNativeQuery(sql)
