@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Providers\Rabbit\Provider;
+namespace App\Queues\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
