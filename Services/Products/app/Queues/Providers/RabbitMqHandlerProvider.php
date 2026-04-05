@@ -19,8 +19,8 @@ class RabbitMqHandlerProvider extends ServiceProvider
 
     protected function registerHandlers(): void
     {
-        $handlerPath = app_path('Rabbit/Handler');
-        $namespace = 'App\\Rabbit\\Handler\\';
+        $handlerPath = app_path('Queues/Handlers');
+        $namespace = 'App\\Queues\\Handlers\\';
 
         foreach (scandir($handlerPath) as $file) {
             if (!Str::endsWith($file, 'Handler.php')) {
