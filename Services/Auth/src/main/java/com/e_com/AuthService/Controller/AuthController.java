@@ -1,13 +1,13 @@
 package com.e_com.AuthService.Controller;
 
 import com.e_com.AuthService.Annotation.Auth.Authenticated;
-import com.e_com.AuthService.Constants.Http;
 import com.e_com.AuthService.Contract.IAuthService;
+import com.e_com.AuthService.Contract.ICookieService;
 import com.e_com.AuthService.Model.User;
-import com.e_com.AuthService.Response.AuthResponse;
 import com.e_com.AuthService.Response.ProfileResponse;
 import com.e_com.AuthService.Response.RegisterResponse;
 import com.e_com.AuthService.Utils.Auth.ContextHolder;
+import com.e_com.AuthService.Utils.Auth.JwtService;
 import com.e_com.AuthService.Validation.*;
 
 import jakarta.mail.MessagingException;
@@ -19,7 +19,6 @@ import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,32 +27,13 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     @Autowired
+    private JwtService jwtService;
+
+    @Autowired
     private IAuthService auth;
 
-    private ResponseEntity<HashMap<String, Object>> createAuthResponse(AuthResponse authRes) {
-        ResponseCookie accessCookie = ResponseCookie.from("ACCESS_TOKEN", authRes.getAccessToken())
-                .httpOnly(true) // JS không truy cập
-                .path("/") // scope cookie
-                .maxAge(15 * 60) // 15 phút
-                .sameSite("Strict") // CSRF protection
-                .build();
-
-        ResponseCookie refreshCookie = ResponseCookie.from("REFRESH_TOKEN", authRes.getRefreshToken())
-                .httpOnly(true)
-                // .secure(true)
-                .path("/")
-                .maxAge(7 * 24 * 60 * 60) // 7 ngày
-                .sameSite("Strict")
-                .build();
-
-        HashMap<String, Object> response = new HashMap<>();
-        response.put("success", authRes.getSuccess());
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, accessCookie.toString())
-                .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
-                .body(response);
-    }
+    @Autowired
+    private ICookieService cookieService;
 
     @PostMapping("/register")
     public RegisterResponse register(@Valid @RequestBody(required = false) RegisterRequest req)
@@ -64,19 +44,41 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<HashMap<String, Object>> login(@Valid @RequestBody(required = false) LoginRequest req) {
         var authRes = auth.login(req);
-        return createAuthResponse(authRes);
+        HttpHeaders cookies = cookieService.createAuthCookies(authRes.getAccessToken(), authRes.getRefreshToken());
+
+        HashMap<String, Object> response = new HashMap<>();
+        response.put("success", authRes.getSuccess());
+
+        return ResponseEntity.ok()
+                .headers(cookies)
+                .body(response);
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<HashMap<String, Object>> refreshToken(@Valid @RequestBody(required = false) RefreshTokenRequest req) {
+    public ResponseEntity<HashMap<String, Object>> refreshToken(
+            @Valid @RequestBody(required = false) RefreshTokenRequest req) {
         var authRes = auth.refreshToken(req);
-        return createAuthResponse(authRes);
+        HttpHeaders cookies = cookieService.createAuthCookies(authRes.getAccessToken(), authRes.getRefreshToken());
+
+        HashMap<String, Object> response = new HashMap<>();
+        response.put("success", authRes.getSuccess());
+
+        return ResponseEntity.ok()
+                .headers(cookies)
+                .body(response);
     }
 
     @GetMapping("/verify-email")
     public ResponseEntity<HashMap<String, Object>> activeUser(@Valid @ModelAttribute ActivateUserRequest request) {
         var authRes = auth.activeUser(request.getEmail(), request.getToken());
-        return createAuthResponse(authRes);
+        HttpHeaders cookies = cookieService.createAuthCookies(authRes.getAccessToken(), authRes.getRefreshToken());
+
+        HashMap<String, Object> response = new HashMap<>();
+        response.put("success", authRes.getSuccess());
+
+        return ResponseEntity.ok()
+                .headers(cookies)
+                .body(response);
     }
 
     @PostMapping("/forgot-password")
@@ -110,29 +112,27 @@ public class AuthController {
     @Authenticated
     @PostMapping("/logout")
     public ResponseEntity<HashMap<String, Object>> logout(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        String accessToken = null;
-        String refreshToken = null;
+        HashMap<String, String> cookieMap = new HashMap<>();
 
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("ACCESS_TOKEN".equals(cookie.getName())) {
-                    accessToken = cookie.getValue().trim();
-                } else if ("REFRESH_TOKEN".equals(cookie.getName())) {
-                    refreshToken = cookie.getValue().trim();
-                }
-
-                if (accessToken != null && refreshToken != null) {
-                    break;
-                }
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                cookieMap.put(cookie.getName(), cookie.getValue());
             }
         }
 
-        auth.logout(Http.ACCESS_TOKEN_COOKIE, accessToken);
-        auth.logout(Http.REFRESH_TOKEN_COOKIE, refreshToken);
+        String accessToken = cookieMap.get("ACCESS_TOKEN");
+        String refreshToken = cookieMap.get("REFRESH_TOKEN");
 
-        AuthResponse authResponse = new AuthResponse(null, null, true);
+        jwtService.invalidateToken(accessToken);
+        jwtService.invalidateToken(refreshToken);
 
-        return createAuthResponse(authResponse);
+        HttpHeaders headers = cookieService.createClearCookies();
+
+        HashMap<String, Object> response = new HashMap<>();
+        response.put("success", true);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(response);
     }
 }
