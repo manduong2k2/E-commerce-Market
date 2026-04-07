@@ -71,7 +71,7 @@ public class AuthService implements IAuthService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ErrorMessage.TOKEN_INVALID);
         }
 
-        user.setStatus("ACTIVE");
+        user.setStatus(UserStatus.ACTIVE);
         repo.save(user);
         return new AuthResponse(tokenService.generateAccessToken(user.toDomain()),
                 tokenService.generateRefreshToken(user.toDomain()),
