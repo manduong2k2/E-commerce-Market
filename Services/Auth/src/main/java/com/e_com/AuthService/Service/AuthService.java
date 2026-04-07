@@ -1,5 +1,6 @@
 package com.e_com.AuthService.Service;
 
+import com.e_com.AuthService.Constants.ErrorMessage;
 import com.e_com.AuthService.Constants.Queue;
 import com.e_com.AuthService.Constants.UserStatus;
 import com.e_com.AuthService.Contract.IAuthService;
@@ -62,7 +63,14 @@ public class AuthService implements IAuthService {
     }
 
     public AuthResponse activeUser(String email, String token) {
-        var user = repo.findByEmail(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        var user = repo.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ErrorMessage.USER_NOT_FOUND));
+
+        boolean isVerified = emailVerificationTokenService.verify(email, token);
+        if (!isVerified) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ErrorMessage.TOKEN_INVALID);
+        }
+
         user.setStatus("ACTIVE");
         repo.save(user);
         return new AuthResponse(tokenService.generateAccessToken(user.toDomain()),
@@ -72,17 +80,14 @@ public class AuthService implements IAuthService {
 
     public AuthResponse login(LoginRequest req) {
         var user = repo.findByEmail(req.getEmail())
-                .orElseThrow(() -> new AuthenticationException("Invalid credentials") {
-                });
+                .orElseThrow(() -> new AuthenticationException(ErrorMessage.CREDENTIALS) {});
 
         if (!user.getStatus().equals(UserStatus.ACTIVE)) {
-            throw new AuthenticationException("Account is not active") {
-            };
+            throw new AuthenticationException(ErrorMessage.ACTIVATION) {};
         }
 
         if (!encoder.matches(req.getPassword(), user.getPassword())) {
-            throw new AuthenticationException("Invalid credentials") {
-            };
+            throw new AuthenticationException(ErrorMessage.CREDENTIALS) {};
         }
 
         return new AuthResponse(
@@ -94,10 +99,10 @@ public class AuthService implements IAuthService {
     public AuthResponse refreshToken(RefreshTokenRequest req) {
         var claims = tokenService.verifyToken(req.getRefreshToken());
         if (claims == null)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid refresh token");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ErrorMessage.TOKEN_INVALID);
 
         var user = repo.findById(UUID.fromString(claims.getSubject()))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ErrorMessage.USER_NOT_FOUND));
 
         return new AuthResponse(tokenService.generateAccessToken(user.toDomain()),
                 tokenService.generateRefreshToken(user.toDomain()),
@@ -105,7 +110,7 @@ public class AuthService implements IAuthService {
     }
 
     public boolean sendActivationEmail(String email) throws MessagingException {
-        String token = UUID.randomUUID().toString(); //switch
+        String token = UUID.randomUUID().toString(); // switch
 
         emailVerificationTokenService.createToken(email, token);
         emailVerificationTokenService.sendVerifyEmail(email, token);
@@ -122,7 +127,12 @@ public class AuthService implements IAuthService {
 
     public boolean resetPassword(String email, String token, String newPassword) {
         var user = repo.findByEmail(email)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ErrorMessage.USER_NOT_FOUND));
+
+        boolean isVerified = emailVerificationTokenService.verify(email, token);
+        if (!isVerified) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ErrorMessage.TOKEN_INVALID);
+        }
 
         user.setPassword(encoder.encode(newPassword));
         repo.save(user);
@@ -136,8 +146,7 @@ public class AuthService implements IAuthService {
                 "{\"action\":\"logout\",\"token\":\"%s\",\"key\":\"%s\",\"timestamp\":\"%s\"}",
                 token,
                 key,
-                java.time.Instant.now().toString()
-        );
+                java.time.Instant.now().toString());
 
         messagePublisher.sendMessage(message, Queue.LOGOUT);
     }

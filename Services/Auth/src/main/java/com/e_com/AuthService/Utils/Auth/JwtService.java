@@ -16,6 +16,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.e_com.AuthService.Constants.ErrorMessage;
 import com.e_com.AuthService.Model.User;
 import com.e_com.AuthService.Repository.IUserRepository;
 
@@ -107,14 +108,13 @@ public class JwtService {
                     .parseClaimsJws(token);
             
             if(blacklist.containsKey(claims.getBody().getId())) {
-                throw new AuthenticationException("Token has been blacklisted") {
+                throw new AuthenticationException(ErrorMessage.TOKEN_BLACKLISTED) {
                 };
             }
 
             return claims.getBody();
         } catch (JwtException e) {
-            throw new AuthenticationException("Invalid JWT token: " + token) {
-            };
+            throw new AuthenticationException(ErrorMessage.TOKEN_INVALID) {};
         }
     }
 
