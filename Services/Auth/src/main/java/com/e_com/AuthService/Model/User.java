@@ -3,6 +3,8 @@ package com.e_com.AuthService.Model;
 import java.util.Set;
 import java.util.UUID;
 
+import com.e_com.AuthService.Constants.UserStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -24,15 +26,15 @@ public class User {
         this.roles = roles;
     }
 
-    public User(UUID id, String email, String password, String status, LocalDateTime createdAt) {
+    public User(UUID id, String email, String password, LocalDateTime createdAt) {
         this.id = id;
         this.email = email;
         this.password = password;
-        this.status = status;
+        this.status = UserStatus.DEFAULT;
         this.createdAt = createdAt;
     }
 
     public com.e_com.AuthService.Entity.User toEntity() {
-        return new com.e_com.AuthService.Entity.User(email, password, status);
+        return new com.e_com.AuthService.Entity.User(email, password, UserStatus.DEFAULT);
     }
 }

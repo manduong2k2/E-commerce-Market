@@ -19,9 +19,10 @@ public class DatabaseSeeder {
         return args -> {
             if (this.roleRepository.count() == 0) {
                 this.roleRepository.save(new Role("System Administrator", "SYS_ADMIN"));
-                this.roleRepository.save(new Role("System User", "SYS_USER"));
-                this.roleRepository.save(new Role("Client Administrator", "CLI_ADMIN"));
-                this.roleRepository.save(new Role("Client User", "CLI_USER"));
+                this.roleRepository.save(new Role("System Staff", "SYS_STAFF"));
+                this.roleRepository.save(new Role("Vendor Administrator", "VDR_ADMIN"));
+                this.roleRepository.save(new Role("Vendor Staff", "VDR_STAFF"));
+                this.roleRepository.save(new Role("Customer", "CUSTOMER"));
             }
         };
     }

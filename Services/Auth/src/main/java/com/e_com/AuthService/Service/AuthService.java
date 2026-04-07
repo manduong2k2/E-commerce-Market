@@ -1,6 +1,7 @@
 package com.e_com.AuthService.Service;
 
 import com.e_com.AuthService.Constants.Queue;
+import com.e_com.AuthService.Constants.UserStatus;
 import com.e_com.AuthService.Contract.IAuthService;
 import com.e_com.AuthService.Entity.Role;
 import com.e_com.AuthService.Model.User;
@@ -47,9 +48,9 @@ public class AuthService implements IAuthService {
 
     @Transactional
     public RegisterResponse register(RegisterRequest req) throws MessagingException {
-        var user = new User(null, req.getEmail(), encoder.encode(req.getPassword()), "INACTIVE", LocalDateTime.now());
+        var user = new User(null, req.getEmail(), encoder.encode(req.getPassword()), LocalDateTime.now());
         var userEntity = user.toEntity();
-        var clientRole = this.roleRepo.findByCode("CLI_USER");
+        var clientRole = this.roleRepo.findByCode("CUSTOMER");
         var roles = new java.util.HashSet<Role>();
         roles.add(clientRole);
         userEntity.setRoles(roles);
@@ -74,7 +75,7 @@ public class AuthService implements IAuthService {
                 .orElseThrow(() -> new AuthenticationException("Invalid credentials") {
                 });
 
-        if (!user.getStatus().equals("ACTIVE")) {
+        if (!user.getStatus().equals(UserStatus.ACTIVE)) {
             throw new AuthenticationException("Account is not active") {
             };
         }

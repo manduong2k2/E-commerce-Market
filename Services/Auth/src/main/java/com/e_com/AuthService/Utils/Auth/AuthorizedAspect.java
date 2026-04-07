@@ -5,6 +5,9 @@ import org.aspectj.lang.annotation.*;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
+import com.e_com.AuthService.Constants.ErrorMessage;
+import com.e_com.AuthService.Constants.Http;
+
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -27,7 +30,7 @@ public class AuthorizedAspect {
         String token = null;
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("ACCESS_TOKEN".equals(cookie.getName())) {
+                if (Http.ACCESS_TOKEN_COOKIE.equals(cookie.getName())) {
                     token = cookie.getValue();
                     break;
                 }
@@ -35,12 +38,12 @@ public class AuthorizedAspect {
         }
 
         if (token == null) {
-            throw new AuthenticationException("Unauthenticated"){}; 
+            throw new AuthenticationException(ErrorMessage.UNAUTHENTICATED){}; 
         }
 
         String userId = jwtService.verifyToken(token).getSubject();
         if (userId == null) {
-            throw new AuthenticationException("Unauthenticated"){};
+            throw new AuthenticationException(ErrorMessage.UNAUTHENTICATED){};
         }
 
         ContextHolder.setUser(userId);

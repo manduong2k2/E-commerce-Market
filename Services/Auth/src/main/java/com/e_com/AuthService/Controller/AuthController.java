@@ -1,6 +1,7 @@
 package com.e_com.AuthService.Controller;
 
 import com.e_com.AuthService.Annotation.Auth.Authenticated;
+import com.e_com.AuthService.Constants.Http;
 import com.e_com.AuthService.Contract.IAuthService;
 import com.e_com.AuthService.Contract.ICookieService;
 import com.e_com.AuthService.Model.User;
@@ -120,8 +121,8 @@ public class AuthController {
             }
         }
 
-        String accessToken = cookieMap.get("ACCESS_TOKEN");
-        String refreshToken = cookieMap.get("REFRESH_TOKEN");
+        String accessToken = cookieMap.get(Http.ACCESS_TOKEN_COOKIE);
+        String refreshToken = cookieMap.get(Http.REFRESH_TOKEN_COOKIE);
 
         jwtService.invalidateToken(accessToken);
         jwtService.invalidateToken(refreshToken);

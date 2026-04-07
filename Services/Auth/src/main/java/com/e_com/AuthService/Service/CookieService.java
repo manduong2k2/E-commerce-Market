@@ -1,5 +1,6 @@
 package com.e_com.AuthService.Service;
 
+import com.e_com.AuthService.Constants.Http;
 import com.e_com.AuthService.Contract.ICookieService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -13,7 +14,7 @@ public class CookieService implements ICookieService {
     private String authDomain;
 
     public HttpHeaders createAuthCookies(String accessToken, String refreshToken) {
-        ResponseCookie accessCookie = ResponseCookie.from("ACCESS_TOKEN", accessToken)
+        ResponseCookie accessCookie = ResponseCookie.from(Http.ACCESS_TOKEN_COOKIE, accessToken)
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
@@ -22,7 +23,7 @@ public class CookieService implements ICookieService {
                 .sameSite("Strict")
                 .build();
 
-        ResponseCookie refreshCookie = ResponseCookie.from("REFRESH_TOKEN", refreshToken)
+        ResponseCookie refreshCookie = ResponseCookie.from(Http.REFRESH_TOKEN_COOKIE, refreshToken)
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
@@ -38,7 +39,7 @@ public class CookieService implements ICookieService {
     }
 
     public HttpHeaders createClearCookies() {
-        ResponseCookie clearAccessCookie = ResponseCookie.from("ACCESS_TOKEN", "")
+        ResponseCookie clearAccessCookie = ResponseCookie.from(Http.ACCESS_TOKEN_COOKIE, "")
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
@@ -47,7 +48,7 @@ public class CookieService implements ICookieService {
                 .sameSite("Strict")
                 .build();
 
-        ResponseCookie clearRefreshCookie = ResponseCookie.from("REFRESH_TOKEN", "")
+        ResponseCookie clearRefreshCookie = ResponseCookie.from(Http.REFRESH_TOKEN_COOKIE, "")
                 .httpOnly(true)
                 .secure(true)
                 .path("/")

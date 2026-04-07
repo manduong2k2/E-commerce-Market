@@ -3,6 +3,8 @@ package com.e_com.AuthService.Entity;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.SoftDelete;
 import org.hibernate.annotations.SoftDeleteType;
 
@@ -27,15 +29,21 @@ public class User {
     @Column(columnDefinition = "varchar(200)", nullable = false)
     private String password;
 
-    @Column(columnDefinition = "varchar(20) default 'ACTIVE'", nullable = true)
+    @Column(columnDefinition = "varchar(255)", nullable = true)
+    private String name;
+
+    @Column(columnDefinition = "varchar(255)", nullable = true)
+    private String avatar;
+
+    @Column(unique = true, columnDefinition = "varchar(255)", nullable = true)
+    private String phone;
+
+    @Column(columnDefinition = "varchar(20) default 'INACTIVE'", nullable = true)
     private String status;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
-    @JoinTable(
-        name = "user_roles",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Role> roles;
 
     @CreationTimestamp
@@ -52,6 +60,7 @@ public class User {
     }
 
     public com.e_com.AuthService.Model.User toDomain() {
-        return new com.e_com.AuthService.Model.User(id, email, password, status, roles.stream().map(Role::toDomain).collect(java.util.stream.Collectors.toSet()), createdAt);
+        return new com.e_com.AuthService.Model.User(id, email, password, status,
+                roles.stream().map(Role::toDomain).collect(java.util.stream.Collectors.toSet()), createdAt);
     }
 }
