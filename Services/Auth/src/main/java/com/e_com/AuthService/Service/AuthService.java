@@ -13,7 +13,6 @@ import com.e_com.AuthService.Response.RegisterResponse;
 import com.e_com.AuthService.Utils.Auth.JwtService;
 import com.e_com.AuthService.Validation.*;
 
-import io.jsonwebtoken.Claims;
 import jakarta.mail.MessagingException;
 
 import java.util.UUID;
@@ -48,10 +47,10 @@ public class AuthService implements IAuthService {
 
     @Transactional
     public RegisterResponse register(RegisterRequest req) throws MessagingException {
-        User user = new User(null ,req.getEmail(), encoder.encode(req.getPassword()), req.getName(), null, req.getPhone(), UserStatus.DEFAULT);
-        com.e_com.AuthService.Entity.User userEntity = user.toEntity();
-        Role clientRole = this.roleRepo.findByCode("CUSTOMER");
-        java.util.HashSet<Role> roles = new java.util.HashSet<Role>();
+        var user = new User(null ,req.getEmail(), encoder.encode(req.getPassword()), req.getName(), null, req.getPhone(), UserStatus.DEFAULT);
+        var userEntity = user.toEntity();
+        var clientRole = this.roleRepo.findByCode("CUSTOMER");
+        var roles = new java.util.HashSet<Role>();
         roles.add(clientRole);
         userEntity.setRoles(roles);
         this.repo.save(userEntity);
@@ -62,7 +61,7 @@ public class AuthService implements IAuthService {
     }
 
     public AuthResponse activeUser(String email, String token) {
-        com.e_com.AuthService.Entity.User user = repo.findByEmail(email)
+        var user = repo.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ErrorMessage.USER_NOT_FOUND));
 
         boolean isVerified = emailVerificationTokenService.verify(email, token);
@@ -78,7 +77,7 @@ public class AuthService implements IAuthService {
     }
 
     public AuthResponse login(LoginRequest req) {
-        com.e_com.AuthService.Entity.User user = repo.findByEmail(req.getEmail())
+        var user = repo.findByEmail(req.getEmail())
                 .orElseThrow(() -> new AuthenticationException(ErrorMessage.CREDENTIALS) {});
 
         if (!user.getStatus().equals(UserStatus.ACTIVE)) {
@@ -96,11 +95,11 @@ public class AuthService implements IAuthService {
     }
 
     public AuthResponse refreshToken(RefreshTokenRequest req) {
-        Claims claims = tokenService.verifyToken(req.getRefreshToken());
+        var claims = tokenService.verifyToken(req.getRefreshToken());
         if (claims == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ErrorMessage.TOKEN_INVALID);
 
-        com.e_com.AuthService.Entity.User user = repo.findById(UUID.fromString(claims.getSubject()))
+        var user = repo.findById(UUID.fromString(claims.getSubject()))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ErrorMessage.USER_NOT_FOUND));
 
         return new AuthResponse(tokenService.generateAccessToken(user.toDomain()),
@@ -125,7 +124,7 @@ public class AuthService implements IAuthService {
     }
 
     public boolean resetPassword(String email, String token, String newPassword) {
-        com.e_com.AuthService.Entity.User user = repo.findByEmail(email)
+        var user = repo.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ErrorMessage.USER_NOT_FOUND));
 
         boolean isVerified = emailVerificationTokenService.verify(email, token);
