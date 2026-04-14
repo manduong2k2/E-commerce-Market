@@ -12,7 +12,7 @@ public class File {
     private java.util.UUID id;
 
     @Column(unique = true, nullable = false)
-    private String url;
+    private String suffix;
 
     @Column(unique = false, nullable = false)
     private String originalName;
@@ -28,8 +28,8 @@ public class File {
 
     public File() {}
 
-    public File(String url, Long size, String originalName, String name, String extension) {
-        this.url = url;
+    public File(String suffix, Long size, String originalName, String name, String extension) {
+        this.suffix = suffix;
         this.size = size;
         this.originalName = originalName;
         this.name = name;
@@ -37,6 +37,6 @@ public class File {
     }
 
     public com.e_com.StorageService.Model.File toDomain() {
-        return new com.e_com.StorageService.Model.File(id, url, originalName, name, extension, size);
+        return new com.e_com.StorageService.Model.File(id, suffix, originalName, name, extension, size);
     }
 }

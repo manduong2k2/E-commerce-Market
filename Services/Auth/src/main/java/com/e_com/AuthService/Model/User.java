@@ -16,15 +16,11 @@ public class User {
     private String email;
     private String password;    
     private String status;
+    private String name;
+    private String avatar;
+    private String phone;
     private Set<Role> roles;
     private LocalDateTime createdAt;
-
-    public User(String email, String password, String status, Set<Role> roles) {
-        this.email = email;
-        this.password = password;
-        this.status = status;
-        this.roles = roles;
-    }
 
     public User(UUID id, String email, String password, LocalDateTime createdAt) {
         this.id = id;
@@ -34,7 +30,18 @@ public class User {
         this.createdAt = createdAt;
     }
 
+    public User(UUID id, String email, String password, String name, String avatar, String phone, String status) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.avatar = avatar;
+        this.phone = phone;
+        this.status = status;
+        this.createdAt = LocalDateTime.now();
+    }
+
     public com.e_com.AuthService.Entity.User toEntity() {
-        return new com.e_com.AuthService.Entity.User(email, password, UserStatus.DEFAULT);
+        return new com.e_com.AuthService.Entity.User(this.email, this.password, this.status, this.name, this.avatar, this.phone);
     }
 }

@@ -59,8 +59,17 @@ public class User {
         this.status = status;
     }
 
+    public User(String email, String password, String status, String name, String avatar, String phone) {
+        this.email = email;
+        this.password = password;
+        this.status = status;
+        this.name = name;
+        this.avatar = avatar;
+        this.phone = phone;
+    }
+
     public com.e_com.AuthService.Model.User toDomain() {
-        return new com.e_com.AuthService.Model.User(id, email, password, status,
+        return new com.e_com.AuthService.Model.User(id, email, password, status, name, avatar, phone,
                 roles.stream().map(Role::toDomain).collect(java.util.stream.Collectors.toSet()), createdAt);
     }
 }

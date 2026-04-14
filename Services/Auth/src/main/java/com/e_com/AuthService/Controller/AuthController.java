@@ -5,6 +5,7 @@ import com.e_com.AuthService.Constants.Http;
 import com.e_com.AuthService.Contract.IAuthService;
 import com.e_com.AuthService.Contract.ICookieService;
 import com.e_com.AuthService.Model.User;
+import com.e_com.AuthService.Response.AuthResponse;
 import com.e_com.AuthService.Response.ProfileResponse;
 import com.e_com.AuthService.Response.RegisterResponse;
 import com.e_com.AuthService.Utils.Auth.ContextHolder;
@@ -44,7 +45,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<HashMap<String, Object>> login(@Valid @RequestBody(required = false) LoginRequest req) {
-        var authRes = auth.login(req);
+        AuthResponse authRes = auth.login(req);
         HttpHeaders cookies = cookieService.createAuthCookies(authRes.getAccessToken(), authRes.getRefreshToken());
 
         HashMap<String, Object> response = new HashMap<>();
@@ -58,7 +59,7 @@ public class AuthController {
     @PostMapping("/refresh-token")
     public ResponseEntity<HashMap<String, Object>> refreshToken(
             @Valid @RequestBody(required = false) RefreshTokenRequest req) {
-        var authRes = auth.refreshToken(req);
+        AuthResponse authRes = auth.refreshToken(req);
         HttpHeaders cookies = cookieService.createAuthCookies(authRes.getAccessToken(), authRes.getRefreshToken());
 
         HashMap<String, Object> response = new HashMap<>();
@@ -71,7 +72,7 @@ public class AuthController {
 
     @GetMapping("/verify-email")
     public ResponseEntity<HashMap<String, Object>> activeUser(@Valid @ModelAttribute ActivateUserRequest request) {
-        var authRes = auth.activeUser(request.getEmail(), request.getToken());
+        AuthResponse authRes = auth.activeUser(request.getEmail(), request.getToken());
         HttpHeaders cookies = cookieService.createAuthCookies(authRes.getAccessToken(), authRes.getRefreshToken());
 
         HashMap<String, Object> response = new HashMap<>();

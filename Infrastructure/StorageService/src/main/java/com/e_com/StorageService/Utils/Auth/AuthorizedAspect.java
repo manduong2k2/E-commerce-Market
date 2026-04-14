@@ -1,57 +1,41 @@
 package com.e_com.StorageService.Utils.Auth;
 
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.*;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.stereotype.Component;
+import com.e_com.StorageService.Annotation.Auth.Authorized;
 
-import com.e_com.StorageService.Constants.ErrorMessage;
-import com.e_com.StorageService.Constants.Http;
-
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 
-@Component
+import lombok.RequiredArgsConstructor;
+
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.*;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
+
+import java.lang.reflect.Method;
+
 @Aspect
+@Component
+@RequiredArgsConstructor
 public class AuthorizedAspect {
 
+    private final ApplicationContext applicationContext;
     private final HttpServletRequest request;
 
-    private final JwtService jwtService;
-
-    public AuthorizedAspect(HttpServletRequest request, JwtService jwtService) {
-        this.request = request;
-        this.jwtService = jwtService;
-    }
-
-    @Around("@annotation(com.e_com.StorageService.Annotation.Auth.Authenticated)")
-    public Object authorize(ProceedingJoinPoint joinPoint) throws Throwable {
-        Cookie[] cookies = request.getCookies();
-        String token = null;
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (Http.ACCESS_TOKEN_COOKIE.equals(cookie.getName())) {
-                    token = cookie.getValue();
-                    break;
-                }
-            }
-        }
-
-        if (token == null) {
-            throw new AuthenticationException(ErrorMessage.UNAUTHENTICATED){}; 
-        }
-
-        String userId = jwtService.verifyToken(token).getSubject();
-        if (userId == null) {
-            throw new AuthenticationException(ErrorMessage.UNAUTHENTICATED){};
-        }
-
-        ContextHolder.setUser(userId);
-
+    @Before("@annotation(authorized)")
+    public void handle(JoinPoint joinPoint, Authorized authorized) {
         try {
-            return joinPoint.proceed();
-        } finally {
-            ContextHolder.clear();
+            Class<?> securityClass = authorized.security();
+            String methodName = authorized.method();
+
+            Object bean = applicationContext.getBean(securityClass);
+
+            Method method = securityClass.getMethod(methodName, HttpServletRequest.class);
+
+            method.invoke(bean, request);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException("Security method not found");
+        } catch (Exception e) {
+            throw new RuntimeException("Authorization failed", e);
         }
     }
 }
