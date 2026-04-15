@@ -35,3 +35,4 @@ build/
 ### Sensitive ###
 src/main/resources/keys/*
 src/main/resources/application.properties
+uploads/*
