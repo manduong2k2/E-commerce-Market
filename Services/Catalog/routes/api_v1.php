@@ -10,8 +10,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware([AuthenticateMiddleware::class])->group(function () {
 
-    Route::apiResource('products', ProductController::class);
+    Route::apiResource('products', ProductController::class)->except(['index']);
 });
+
+Route::get('products', [ProductController::class,'index'])->name('products.index');
 
 Route::apiResource('brands', BrandController::class);
 Route::apiResource('categories', CategoryController::class);

@@ -139,6 +139,11 @@
 			<artifactId>thymeleaf-spring6</artifactId>
 			<version>3.1.1.RELEASE</version> <!-- Phiên bản tương thích Spring 6 / Boot 4 -->
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webflux</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

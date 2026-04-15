@@ -17,8 +17,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
-
+public class AppConfig {
     @Value("${spring.application.auth-domain}")
     private String authDomain;
 
@@ -43,8 +42,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOriginPatterns(List.of(
-                "https://*."+ authDomain,
-                "https://"+ authDomain,
+                "https://*." + authDomain,
+                "https://" + authDomain,
                 "http://localhost:*")); // frontend & other services & local development
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));

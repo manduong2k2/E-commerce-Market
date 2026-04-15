@@ -18,8 +18,6 @@ class ProductController extends Controller
 
     public function index(IndexRequest $request)
     {
-        policy_authorize(ProductProlicy::class, 'list', user());
-
         $products = $this->productService->getAllProducts($request->validated());
 
         return new ProductShortResourceCollection($products);
