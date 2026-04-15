@@ -17,7 +17,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
+public class AppConfig {
 
     @Value("${spring.application.auth-domain}")
     private String authDomain;
