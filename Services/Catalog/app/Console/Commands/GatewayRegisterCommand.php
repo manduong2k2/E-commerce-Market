@@ -31,6 +31,11 @@ class GatewayRegisterCommand extends Command
                 'name' => config('app.name'),
                 'url' => config('app.url'),
             ]);
+
+            $this->httpClient->post(config('gateway.admin_url') . '/routes', [
+                'paths' => ['/' . config('app.name')],
+                'service' => ['name' => config('app.name')],
+            ]);
         }
 
         $this->httpClient->put(config('gateway.admin_url') . '/services/' . config('app.name'), [

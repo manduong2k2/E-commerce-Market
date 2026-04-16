@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Facades\HttpClient;
+use App\Facades\HttpClientInterface;
 use App\Providers\Auth\ApiUserProvider;
 use App\Supports\Scopes\BaseScope;
 use Illuminate\Support\ServiceProvider;
@@ -19,6 +21,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->registerServices();
         $this->registerRepositories();
+        $this->app->singleton(HttpClientInterface::class, HttpClient::class);
     }
 
     /**
