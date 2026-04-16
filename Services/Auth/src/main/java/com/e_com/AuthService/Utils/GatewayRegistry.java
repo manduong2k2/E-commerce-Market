@@ -61,7 +61,7 @@ public class GatewayRegistry {
             gatewayWebClient.post()
                     .uri("/services/" + serviceName + "/routes")
                     .bodyValue(Map.of(
-                            "paths", List.of("/"),
+                            "paths", List.of("/" + serviceName),
                             "strip_path", true))
                     .retrieve()
                     .bodyToMono(String.class)
