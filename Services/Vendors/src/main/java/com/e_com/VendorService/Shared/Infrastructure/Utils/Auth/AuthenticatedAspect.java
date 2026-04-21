@@ -5,6 +5,7 @@ import org.aspectj.lang.annotation.*;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
+import com.e_com.VendorService.Shared.Infrastructure.Annotation.Auth.Authenticated;
 import com.e_com.VendorService.Shared.Infrastructure.Constants.ErrorMessage;
 import com.e_com.VendorService.Shared.Infrastructure.Constants.Http;
 
@@ -24,8 +25,8 @@ public class AuthenticatedAspect {
         this.jwtService = jwtService;
     }
 
-    @Around("@annotation(com.e_com.VendorService.Shared.Infrastructure.Annotation.Auth.Authenticated)")
-    public Object authorize(ProceedingJoinPoint joinPoint) throws Throwable {
+    @Around("@annotation(authenticated)")
+    public Object authorize(ProceedingJoinPoint joinPoint, Authenticated authenticated) throws Throwable {
         Cookie[] cookies = request.getCookies();
         String token = null;
         if (cookies != null) {
