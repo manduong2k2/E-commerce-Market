@@ -5,6 +5,7 @@ import com.e_com.VendorService.Vendor.Domain.Contract.IVendorRepository;
 import com.e_com.VendorService.Vendor.Infrastructure.Persistence.Entity.VendorEntity;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -14,6 +15,13 @@ public class VendorRepository implements IVendorRepository {
 
     public VendorRepository(VendorJpaRepository jpaRepository) {
         this.jpaRepository = jpaRepository;
+    }
+
+    @Override
+    public List<Vendor> findAll() {
+        return jpaRepository.findAll().stream()
+                .map(this::toDomain)
+                .toList();
     }
 
     @Override

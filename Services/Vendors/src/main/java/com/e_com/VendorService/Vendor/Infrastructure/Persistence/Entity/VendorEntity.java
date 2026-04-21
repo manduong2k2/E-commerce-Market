@@ -1,21 +1,21 @@
 package com.e_com.VendorService.Vendor.Infrastructure.Persistence.Entity;
 
+import java.util.UUID;
+
+import com.e_com.VendorService.Shared.Infrastructure.Persistence.JpaEntity;
 import com.e_com.VendorService.Vendor.Domain.Model.VendorStatus;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
-@Data
 @Table(name = "vendors")
-public class VendorEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+@Data
+@EqualsAndHashCode(callSuper = false)
+public class VendorEntity extends JpaEntity {
     @Column(nullable = false)
-    private Long userId;
+    private UUID userId;
 
     @Column(nullable = false)
     private String name;
@@ -24,12 +24,10 @@ public class VendorEntity {
     @Column(nullable = false)
     private VendorStatus status;
 
-    // ===== constructors =====
-
     public VendorEntity() {}
 
-    public VendorEntity(Long id, Long userId, String name, VendorStatus status) {
-        this.id = id;
+    public VendorEntity(UUID id, UUID userId, String name, VendorStatus status) {
+        this.setId(id);
         this.userId = userId;
         this.name = name;
         this.status = status;

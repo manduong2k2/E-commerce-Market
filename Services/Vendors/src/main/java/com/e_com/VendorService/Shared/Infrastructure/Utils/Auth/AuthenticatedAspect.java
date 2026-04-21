@@ -24,7 +24,7 @@ public class AuthenticatedAspect {
         this.jwtService = jwtService;
     }
 
-    @Around("@annotation(com.e_com.VendorService.Annotation.Auth.Authenticated)")
+    @Around("@annotation(com.e_com.VendorService.Shared.Infrastructure.Annotation.Auth.Authenticated)")
     public Object authorize(ProceedingJoinPoint joinPoint) throws Throwable {
         Cookie[] cookies = request.getCookies();
         String token = null;

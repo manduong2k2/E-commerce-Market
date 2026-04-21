@@ -1,11 +1,10 @@
 package com.e_com.VendorService.Shared.Infrastructure;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Optional;
-
-public class RabbitMQEventPublisher implements EventPublisher {
+@Component
+public class RabbitMQEventPublisher implements IRabbitMQEventPublisher {
     
     private final RabbitTemplate rabbitTemplate;
 
@@ -18,7 +17,7 @@ public class RabbitMQEventPublisher implements EventPublisher {
     }
 
     @Override
-    public void publish(Object event, Optional<HashMap<String, String>> parameters) {
-        sendMessage(event, "vendor.created");
+    public void publish(Object event, String queue) {
+        sendMessage(event, queue);
     }
 }

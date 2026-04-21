@@ -1,30 +1,27 @@
 package com.e_com.VendorService.Vendor.Domain.Model;
 
+import java.util.UUID;
+
 import com.e_com.VendorService.Shared.Domain.AggregateRoot;
 
-public class Vendor extends AggregateRoot<Long> {
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-    private Long userId;
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class Vendor extends AggregateRoot<UUID> {
+    private UUID userId;
     private String name;
     private VendorStatus status;
 
-    public Vendor(Long id, Long userId, String name) {
+    public Vendor(UUID id, UUID userId, String name) {
         super(id);
-
-        if (userId == null) {
-            throw new IllegalArgumentException("userId cannot be null");
-        }
-
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("name cannot be empty");
-        }
-
         this.userId = userId;
         this.name = name;
         this.status = VendorStatus.PENDING;
     }
 
-    public Vendor(Long id, Long userId, String name, VendorStatus status) {
+    public Vendor(UUID id, UUID userId, String name, VendorStatus status) {
         super(id);
         this.userId = userId;
         this.name = name;
@@ -37,26 +34,9 @@ public class Vendor extends AggregateRoot<Long> {
         }
 
         this.status = VendorStatus.ACTIVE;
-
-        // sẽ add event ở bước sau
-        // addDomainEvent(new VendorActivatedEvent(this.id));
     }
 
     public void ban() {
         this.status = VendorStatus.BANNED;
-    }
-
-    // ===== getters =====
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public VendorStatus getStatus() {
-        return status;
     }
 }

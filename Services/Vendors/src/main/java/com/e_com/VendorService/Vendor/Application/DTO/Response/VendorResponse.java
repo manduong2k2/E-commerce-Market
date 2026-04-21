@@ -1,5 +1,7 @@
 package com.e_com.VendorService.Vendor.Application.DTO.Response;
 
+import java.util.UUID;
+
 import com.e_com.VendorService.Vendor.Domain.Model.Vendor;
 import com.e_com.VendorService.Vendor.Domain.Model.VendorStatus;
 
@@ -11,17 +13,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class VendorResponse {
-    private Long id;
-    private Long userId;
+    private UUID id;
+    private UUID userId;
     private String name;
     private VendorStatus status;
 
-    public static VendorResponse from(Vendor vendor) {
-        return new VendorResponse(
-                vendor.getId(),
-                vendor.getUserId(),
-                vendor.getName(),
-                vendor.getStatus()
-        );
+    public VendorResponse(Vendor vendor) {
+        this.id = vendor.getId();
+        this.userId = vendor.getUserId();
+        this.name = vendor.getName();
+        this.status = vendor.getStatus();
     }
 }

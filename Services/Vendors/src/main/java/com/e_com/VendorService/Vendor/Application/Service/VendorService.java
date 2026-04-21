@@ -1,8 +1,14 @@
 package com.e_com.VendorService.Vendor.Application.Service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+import java.util.UUID;
 
-import com.e_com.VendorService.Shared.Infrastructure.EventPublisher;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+
+import com.e_com.VendorService.Shared.Infrastructure.IRabbitMQEventPublisher;
+import com.e_com.VendorService.Shared.Infrastructure.Utils.Auth.ContextHolder;
 import com.e_com.VendorService.Vendor.Application.DTO.Request.CreateVendorRequest;
 import com.e_com.VendorService.Vendor.Application.DTO.Response.VendorResponse;
 import com.e_com.VendorService.Vendor.Domain.Contract.IVendorRepository;
@@ -10,35 +16,39 @@ import com.e_com.VendorService.Vendor.Domain.Model.Vendor;
 
 import jakarta.transaction.Transactional;
 
+@Service
 public class VendorService {
     @Autowired
     public IVendorRepository vendorRepository;
     @Autowired
-    public EventPublisher eventPublisher; 
+    public IRabbitMQEventPublisher eventPublisher; 
+
+    public List<VendorResponse> getAllVendors() {
+        return vendorRepository.findAll().stream()
+                .map(VendorResponse::new)
+                .toList();
+    }
 
     @Transactional
     public VendorResponse createVendor(CreateVendorRequest request) {
 
-        // 1. build domain
+        UUID userId = request.getUserId() != null ? request.getUserId() : ContextHolder.getUser().getId();
+
         Vendor vendor = new Vendor(
                 null,
-                request.getUserId(),
+                userId,
                 request.getName()
         );
 
-        // 2. persist
         vendor = vendorRepository.save(vendor);
 
-        // 3. publish domain events (nếu có)
-        publishDomainEvents(vendor);
+        publishDomainEvents(vendor, "vendor.created");
 
-        // 4. return response
-        return VendorResponse.from(vendor);
+        return new VendorResponse(vendor);
     }
 
     @Transactional
     public void activateVendor(Long vendorId) {
-
         Vendor vendor = vendorRepository.findById(vendorId)
                 .orElseThrow(() -> new RuntimeException("Vendor not found"));
 
@@ -46,12 +56,37 @@ public class VendorService {
 
         vendor = vendorRepository.save(vendor);
 
-        publishDomainEvents(vendor);
+        publishDomainEvents(vendor, "vendor.activated");
     }
 
-    private void publishDomainEvents(Vendor vendor) {
+    @Transactional
+    public void banVendor(Long vendorId) {
+        Vendor vendor = vendorRepository.findById(vendorId)
+                .orElseThrow(() -> new RuntimeException("Vendor not found"));
+
+        vendor.ban();
+
+        vendor = vendorRepository.save(vendor);
+
+        publishDomainEvents(vendor, "vendor.banned");
+    }
+
+    @Transactional
+    public void updateVendor(Long vendorId, String name) {
+        Vendor vendor = vendorRepository.findById(vendorId)
+                .orElseThrow(() -> new RuntimeException("Vendor not found"));
+
+        vendor.setName(name);
+
+        vendor = vendorRepository.save(vendor);
+
+        publishDomainEvents(vendor, "vendor.updated");
+    }
+
+    @Async
+    private void publishDomainEvents(Vendor vendor, String queue) {
         vendor.getDomainEvents()
-                .forEach(event -> eventPublisher.publish(event, java.util.Optional.empty()));
+                .forEach(event -> eventPublisher.publish(event, queue));
 
         vendor.clearDomainEvents();
     }

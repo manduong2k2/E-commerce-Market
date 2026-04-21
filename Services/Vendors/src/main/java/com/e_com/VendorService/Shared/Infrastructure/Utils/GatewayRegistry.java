@@ -17,55 +17,59 @@ import jakarta.annotation.PostConstruct;
 @Component
 @RequiredArgsConstructor
 public class GatewayRegistry {
-    @Autowired
-    @Qualifier("gatewayWebClient")
-    public WebClient gatewayWebClient;
+        @Autowired
+        @Qualifier("gatewayWebClient")
+        public WebClient gatewayWebClient;
 
-    @Value("${spring.application.name}")
-    private String serviceName;
+        @Value("${spring.application.name}")
+        private String serviceName;
 
-    @Value("${spring.application.base-url}")
-    private String serviceUrl;
+        @Value("${spring.application.base-url}")
+        private String serviceUrl;
 
-    @PostConstruct
-    public void register() {
-        try {
-            // 1. Check service exists
-            gatewayWebClient.get()
-                    .uri("/services/" + serviceName)
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
+        @PostConstruct
+        public void register() {
+                try {
+                        // 1. Check service exists
+                        gatewayWebClient.get()
+                                        .uri("/services/" + serviceName)
+                                        .retrieve()
+                                        .bodyToMono(String.class)
+                                        .block();
 
-            gatewayWebClient.put()
-                    .uri("/services/{name}", serviceName)
-                    .bodyValue(Map.of(
-                            "name", serviceName,
-                            "url", serviceUrl))
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
+                        gatewayWebClient.put()
+                                        .uri("/services/{name}", serviceName)
+                                        .bodyValue(Map.of(
+                                                        "name", serviceName,
+                                                        "url", serviceUrl))
+                                        .retrieve()
+                                        .bodyToMono(String.class)
+                                        .block();
 
-        } catch (Exception e) {
-            // 2. Create service
-            gatewayWebClient.post()
-                    .uri("/services")
-                    .bodyValue(Map.of(
-                            "name", serviceName,
-                            "url", serviceUrl))
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
+                } catch (Exception e) {
+                        // 2. Create service
+                        try {
+                                gatewayWebClient.post()
+                                                .uri("/services")
+                                                .bodyValue(Map.of(
+                                                                "name", serviceName,
+                                                                "url", serviceUrl))
+                                                .retrieve()
+                                                .bodyToMono(String.class)
+                                                .block();
 
-            // 3. Create routes
-            gatewayWebClient.post()
-                    .uri("/services/" + serviceName + "/routes")
-                    .bodyValue(Map.of(
-                            "paths", List.of("/"),
-                            "strip_path", true))
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
+                                // 3. Create routes
+                                gatewayWebClient.post()
+                                                .uri("/services/" + serviceName + "/routes")
+                                                .bodyValue(Map.of(
+                                                                "paths", List.of("/" + serviceName),
+                                                                "strip_path", true))
+                                                .retrieve()
+                                                .bodyToMono(String.class)
+                                                .block();
+                        } catch (Exception ex) {
+                                System.out.println("Failed to register service: " + ex.getMessage());
+                        }
+                }
         }
-    }
 }
