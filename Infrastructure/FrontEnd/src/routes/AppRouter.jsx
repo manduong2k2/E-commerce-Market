@@ -6,7 +6,8 @@ import MasterLayout from '../layouts/master/MasterLayout';
 import AuthLayout from '../layouts/auth/AuthLayout';
 
 import LoginPage from '../pages/auth/login/LoginPage';
-import RegisterPage from '../pages/auth/login/RegisterPage';
+import RegisterPage from '../pages/auth/register/RegisterPage';
+import ForgotPasswordPage from '../pages/auth/forgot/ForgotPasswordPage';
 import HomePage from '../pages/home/HomePage';
 
 import { AuthContext } from '../contexts/AuthContext';
@@ -34,6 +35,7 @@ export default function AppRouter() {
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot" element={<ForgotPasswordPage />} />
         </Route>
 
         {/* Route for all users */}

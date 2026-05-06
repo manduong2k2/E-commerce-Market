@@ -49,6 +49,10 @@ export default function LoginPage() {
       <div className="forgot-links">
         <Link to="/forgot">Quên mật khẩu?</Link>
       </div>
+
+      <div className="register-link">
+        Chưa có tài khoản? <Link to="/register">Đăng ký ngay</Link>
+      </div>
     </form>
   );
 }

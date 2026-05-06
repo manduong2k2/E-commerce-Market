@@ -1,10 +1,10 @@
 // services/productService.js
-import { PRODUCT_API_URL } from '../configs/constants';
+import { GATEWAY_URL } from '../configs/constants';
 
 // helper chung
 async function request(path, options = {}) {
   const { method = 'GET', body } = options;
-  const res = await fetch(`${PRODUCT_API_URL}${path}`, {
+  const res = await fetch(`${GATEWAY_URL}${path}`, {
     method,
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include', // gửi cookie HttpOnly nếu cần

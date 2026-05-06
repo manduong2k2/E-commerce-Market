@@ -1,10 +1,10 @@
 // services/authService.js
-import { AUTH_API_URL } from '../configs/constants';
+import { GATEWAY_URL } from '../configs/constants';
 
 // helper chung
 async function request(path, options = {}) {
   const { method = 'GET', body } = options;
-  const res = await fetch(`${AUTH_API_URL}${path}`, {
+  const res = await fetch(`${GATEWAY_URL}${path}`, {
     method,
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include', // cookie HttpOnly tự gửi

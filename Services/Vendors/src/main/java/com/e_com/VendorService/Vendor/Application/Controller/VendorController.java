@@ -1,6 +1,7 @@
 package com.e_com.VendorService.Vendor.Application.Controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,7 +37,7 @@ public class VendorController {
     }
 
     @PostMapping("/{id}/activate")
-    public void activate(@PathVariable Long id) {
+    public void activate(@PathVariable UUID id) {
         vendorService.activateVendor(id);
     }
 }

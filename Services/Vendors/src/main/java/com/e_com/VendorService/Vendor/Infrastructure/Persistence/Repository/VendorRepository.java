@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public class VendorRepository implements IVendorRepository {
@@ -32,13 +33,13 @@ public class VendorRepository implements IVendorRepository {
     }
 
     @Override
-    public Optional<Vendor> findById(Long id) {
+    public Optional<Vendor> findById(UUID id) {
         return jpaRepository.findById(id)
                 .map(this::toDomain);
     }
 
     @Override
-    public Optional<Vendor> findByUserId(Long userId) {
+    public Optional<Vendor> findByUserId(UUID userId) {
         return jpaRepository.findByUserId(userId)
                 .map(this::toDomain);
     }

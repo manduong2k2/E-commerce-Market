@@ -5,7 +5,8 @@
   gap: 20px;
   border-radius: 8px;
   padding: 30px;
-  transition: box-shadow 0.2s ease-in-out;
+  background-color: white;
+  transition: all 0.3s ease;
 }
 
 .login-form h2 {
@@ -21,9 +22,9 @@
   transition: border 0.3s, transform 0.2s;
 }
 
-.login-form input:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+.login-form:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
 .login-form input:focus {
@@ -58,4 +59,34 @@
 
 .forgot-links a:hover {
   text-decoration: underline;
+}
+
+.register-link {
+  text-align: center;
+  margin-top: 25px;
+  font-size: 15px;
+  color: #6c757d;
+}
+
+.register-link a {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.register-link a:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

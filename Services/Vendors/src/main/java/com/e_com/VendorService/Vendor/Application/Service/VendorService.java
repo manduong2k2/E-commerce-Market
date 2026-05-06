@@ -7,7 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import com.e_com.VendorService.Shared.Infrastructure.IRabbitMQEventPublisher;
+import com.e_com.VendorService.Shared.Infrastructure.Event.EventOptions;
+import com.e_com.VendorService.Shared.Infrastructure.Event.IEventPublisher;
 import com.e_com.VendorService.Shared.Infrastructure.Utils.Auth.ContextHolder;
 import com.e_com.VendorService.Vendor.Application.DTO.Request.CreateVendorRequest;
 import com.e_com.VendorService.Vendor.Application.DTO.Response.VendorResponse;
@@ -21,7 +22,7 @@ public class VendorService {
     @Autowired
     public IVendorRepository vendorRepository;
     @Autowired
-    public IRabbitMQEventPublisher eventPublisher; 
+    public IEventPublisher eventPublisher; 
 
     public List<VendorResponse> getAllVendors() {
         return vendorRepository.findAll().stream()
@@ -48,7 +49,7 @@ public class VendorService {
     }
 
     @Transactional
-    public void activateVendor(Long vendorId) {
+    public void activateVendor(UUID vendorId) {
         Vendor vendor = vendorRepository.findById(vendorId)
                 .orElseThrow(() -> new RuntimeException("Vendor not found"));
 
@@ -60,7 +61,7 @@ public class VendorService {
     }
 
     @Transactional
-    public void banVendor(Long vendorId) {
+    public void banVendor(UUID vendorId) {
         Vendor vendor = vendorRepository.findById(vendorId)
                 .orElseThrow(() -> new RuntimeException("Vendor not found"));
 
@@ -72,7 +73,7 @@ public class VendorService {
     }
 
     @Transactional
-    public void updateVendor(Long vendorId, String name) {
+    public void updateVendor(UUID vendorId, String name) {
         Vendor vendor = vendorRepository.findById(vendorId)
                 .orElseThrow(() -> new RuntimeException("Vendor not found"));
 
@@ -86,7 +87,7 @@ public class VendorService {
     @Async
     private void publishDomainEvents(Vendor vendor, String queue) {
         vendor.getDomainEvents()
-                .forEach(event -> eventPublisher.publish(event, queue));
+                .forEach(event -> eventPublisher.publish(event, new EventOptions(queue, false)));
 
         vendor.clearDomainEvents();
     }
