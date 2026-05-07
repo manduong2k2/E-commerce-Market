@@ -6,7 +6,7 @@ use App\Http\Repositories\CategoryRepositoryInterface;
 
 class CategoryService implements CategoryServiceInterface
 {
-    public function __construct(protected CategoryRepositoryInterface $CategoryRepository)
+    public function __construct(protected CategoryRepositoryInterface $CategoryRepository, protected FileServiceInterface $fileService)
     {
     }
 
@@ -22,6 +22,10 @@ class CategoryService implements CategoryServiceInterface
 
     public function createCategory(array $data)
     {
+        if (isset($data['image'])) {
+            $data['image'] = $this->fileService->upload($data['image'], 'categories')['path'];
+        }
+        
         return $this->CategoryRepository->create($data);
     }
 

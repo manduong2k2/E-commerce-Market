@@ -3,23 +3,46 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  border-radius: 8px;
-  padding: 30px;
+  border-radius: 12px;
+  padding: 40px;
   background-color: white;
   transition: all 0.3s ease;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  max-width: 450px;
 }
 
 .login-form h2 {
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
+  color: #333;
+  font-size: 28px;
+  font-weight: 600;
 }
 
 .login-form input {
-  padding: 12px;
+  width: 100%;
+  padding: 15px 20px;
   font-size: 16px;
-  border-radius: 50px;
-  border: 1px solid #ccc;
-  transition: border 0.3s, transform 0.2s;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  background-color: #f8f9fa;
+  box-sizing: border-box;
+}
+
+.login-form input::placeholder {
+  color: #6c757d;
+}
+
+.login-form input:focus {
+  outline: none;
+  border-color: #667eea;
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.login-form input:hover {
+  border-color: #667eea;
 }
 
 .login-form:hover {
@@ -27,25 +50,28 @@
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
-.login-form input:focus {
-  border-color: #1890ff;
-  outline: none;
-}
-
 .login-form button {
-  padding: 12px;
+  padding: 15px;
   font-size: 16px;
-  border-radius: 50px;
+  font-weight: 600;
   border: none;
-  background-color: #1890ff;
-  color: #fff;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
   cursor: pointer;
-  transition: background 0.3s, transform 0.2s;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.login-form button:hover {
-  background-color: #40a9ff;
-  transform: scale(1.05);
+.login-form button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.login-form button:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .forgot-links {
@@ -54,7 +80,7 @@
 }
 
 .forgot-links a {
-  color: #1890ff;
+  color: #667eea;
 }
 
 .forgot-links a:hover {

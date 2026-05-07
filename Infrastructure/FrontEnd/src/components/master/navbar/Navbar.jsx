@@ -25,7 +25,7 @@ export default function Navbar({ onToggleSidebar, sidebarExpanded }) {
         {user ? <button className="toggle-btn" onClick={onToggleSidebar}>
           ☰
         </button> : null}
-        <Link to="/dashboard" className="navbar-logo" >
+        <Link to="/home" className="navbar-logo" >
           MyApp
         </Link>
       </div>

@@ -84,6 +84,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuid('parent_id')->nullable()->constrained('categories')->cascadeOnDelete();
             $table->string('name')->unique();
+            $table->string('image')->nullable();
             $table->text('description')->nullable();
 
             $table->uuid('created_by')->nullable();

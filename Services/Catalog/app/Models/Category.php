@@ -14,8 +14,14 @@ class Category extends Model
     protected $fillable = [
         'name',
         'description',
+        'image',
         'parent_id'
     ];
+
+    public function getImageUrl(): ?string
+    {
+        return config('app.url') . '/storage/' . $this->image;
+    }
 
     public function products(): BelongsToMany
     {

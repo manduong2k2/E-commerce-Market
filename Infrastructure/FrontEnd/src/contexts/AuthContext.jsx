@@ -5,14 +5,14 @@ import { authService } from '../services/authService';
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null); 
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const profile = await authService.profile(); 
-        if(profile.id) setUser(profile); 
+        const profile = await authService.profile();
+        if (profile.id) setUser(profile);
         else setUser(null);
       } catch (err) {
         setUser(null);

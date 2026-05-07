@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Navbar from '../../components/master/navbar/Navbar';
 import Sidebar from '../../components/master/sidebar/Sidebar';
 import Footer from '../../components/master/footer/Footer';
+import PopupManager from '../../components/popup/PopupManager';
 import './MasterLayout.css';
 import { Outlet } from 'react-router-dom';
 
@@ -25,6 +26,7 @@ export default function MasterLayout() {
         </main>
       </div>
       <Footer />
+      <PopupManager />
     </div>
   );
 }

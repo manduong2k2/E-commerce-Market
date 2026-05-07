@@ -2,13 +2,13 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: linear-gradient(135deg, #3b82f6, #ec4899);
+  background: linear-gradient(135deg, #bfc0c2, #696869);
 }
 
 .layout-body {
   display: flex;
   flex: 1;
-  padding-top: 60px;
+  padding-top: 80px;
 }
 
 .layout-main {

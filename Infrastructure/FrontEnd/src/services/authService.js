@@ -1,10 +1,10 @@
 // services/authService.js
-import { GATEWAY_URL } from '../configs/constants';
+import { GATEWAY_URL, AUTH_SERVICE_NAME } from '../configs/constants';
 
 // helper chung
 async function request(path, options = {}) {
   const { method = 'GET', body } = options;
-  const res = await fetch(`${GATEWAY_URL}${path}`, {
+  const res = await fetch(`${GATEWAY_URL}/${AUTH_SERVICE_NAME}${path}`, {
     method,
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include', // cookie HttpOnly tự gửi
@@ -22,14 +22,14 @@ async function request(path, options = {}) {
 
 // ===== Auth APIs =====
 export const authService = {
-  login: (data) => request('/auth/login', { method: 'POST', body: data }),
-  register: (data) => request('/auth/register', { method: 'POST', body: data }),
-  refreshToken: (data) => request('/auth/refresh-token', { method: 'POST', body: data }),
+  login: (data) => request('/api/auth/login', { method: 'POST', body: data }),
+  register: (data) => request('/api/auth/register', { method: 'POST', body: data }),
+  refreshToken: (data) => request('/api/auth/refresh-token', { method: 'POST', body: data }),
   verifyEmail: (email, token) =>
-    request(`/auth/verify-email?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`),
-  forgotPassword: (email) => request('/auth/forgot-password', { method: 'POST', body: { email } }),
+    request(`/api/auth/verify-email?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`),
+  forgotPassword: (email) => request('/api/auth/forgot-password', { method: 'POST', body: { email } }),
   resetPassword: (email, token, newPassword) =>
-    request('/auth/reset-password', { method: 'POST', body: { email, token, newPassword } }),
-  profile: () => request('/auth/profile'),
-  logout: () => request('/auth/logout', { method: 'POST' }),
+    request('/api/auth/reset-password', { method: 'POST', body: { email, token, newPassword } }),
+  profile: () => request('/api/auth/profile'),
+  logout: () => request('/api/auth/logout', { method: 'POST' }),
 };

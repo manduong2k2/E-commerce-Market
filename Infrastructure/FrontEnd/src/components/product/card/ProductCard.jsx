@@ -1,18 +1,35 @@
 import React from 'react';
-import './ProductCard.css'; // import file CSS riêng
+import { useNavigate } from 'react-router-dom';
+import './ProductCard.css';
 
 function ProductCard({ product }) {
-  const { name, categories, brand, priceMin, priceMax, files } = product;
-  const imageUrl = files.length > 0 ? files[0].url : 'https://via.placeholder.com/150';
+  const navigate = useNavigate();
+  const { name, price, files } = product;
+  const imageUrl = files && files.length > 0 ? files[0].url : 'https://via.placeholder.com/200x200?text=Product';
+
+  const handleClick = () => {
+    // Navigate to product detail page
+    navigate(`/product/${product.id}`);
+  };
 
   return (
-    <div className="product-card">
-      <img src={imageUrl} alt={name} className="product-image" />
+    <div className="product-card user-view" onClick={handleClick}>
+      <div className="product-image-container">
+        <img 
+          src={imageUrl} 
+          alt={name} 
+          className="product-image"
+          onError={(e) => {
+            e.target.src = 'https://via.placeholder.com/200x200?text=No+Image';
+          }}
+        />
+      </div>
+      
       <div className="product-info">
-        <a href="#" className="product-name">{name}</a>
-        <p className="product-brand">Brand: {brand}</p>
-        <p className="product-categories">Categories: {categories.join(', ')}</p>
-        <p className="product-price">Price: ${priceMin} ~ ${priceMax}</p>
+        <h3 className="product-name">{name}</h3>
+        {price && (
+          <p className="product-price">${price}</p>
+        )}
       </div>
     </div>
   );

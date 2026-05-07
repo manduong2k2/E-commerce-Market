@@ -2,35 +2,38 @@ import { Link, useNavigate } from 'react-router-dom';
 import React, { useState, useContext } from 'react';
 import { authService } from '../../../services/authService';
 import { AuthContext } from '../../../contexts/AuthContext';
+import { showSuccess, showError } from '../../../components/popup';
 import './LoginPage.css';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { setUser } = useContext(AuthContext); // lấy setUser từ context
+  const { setUser } = useContext(AuthContext); // get setUser from context
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    var form = document.getElementById('login-form');
     try {
       var response = await authService.login({ email, password });
       if (response.success) {
         const user = await authService.profile();
         setUser(user);
-        navigate('/home');
+        showSuccess('Login successful!', 'Welcome back');
+        setTimeout(() => {
+          navigate('/home');
+        }, 1000);
       } else {
-        alert('Login failed!');
+        showError(response.message || 'Login failed', 'Login Error');
       }
     } catch (err) {
-      console.error(err);
-      alert('Login failed!');
+      console.log(err);
+      showError('Login failed! Please try again.', 'Connection Error');
     }
   };
 
   return (
     <form id="login-form" onSubmit={handleSubmit} className="login-form">
-      <h2>Đăng nhập</h2>
+      <h2>Login</h2>
       <input
         type="email"
         placeholder="Email"
@@ -40,18 +43,18 @@ export default function LoginPage() {
       />
       <input
         type="password"
-        placeholder="Mật khẩu"
+        placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         required
       />
       <button type="submit">Login</button>
       <div className="forgot-links">
-        <Link to="/forgot">Quên mật khẩu?</Link>
+        <Link to="/forgot">Forgot password?</Link>
       </div>
 
       <div className="register-link">
-        Chưa có tài khoản? <Link to="/register">Đăng ký ngay</Link>
+        Don't have an account? <Link to="/register">Register now</Link>
       </div>
     </form>
   );
