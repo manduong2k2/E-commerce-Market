@@ -7,7 +7,7 @@ function HomePage() {
   return (
     <div className="homepage">
       <main className="homepage-content">
-        <h1>Trang chủ</h1>
+        <h1>Home</h1>
         <CategoryList />
         <ProductList />
       </main>

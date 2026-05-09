@@ -16,10 +16,13 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
+import java.net.URI;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +38,9 @@ public class AuthController {
 
     @Autowired
     private ICookieService cookieService;
+
+    @Value("${spring.application.auth-domain}")
+    private String authDomain;
 
     @PostMapping("/register")
     public RegisterResponse register(@Valid @RequestBody(required = false) RegisterRequest req)
@@ -72,14 +78,14 @@ public class AuthController {
     @GetMapping("/verify-email")
     public ResponseEntity<HashMap<String, Object>> activeUser(@Valid @ModelAttribute ActivateUserRequest request) {
         var authRes = auth.activeUser(request.getEmail(), request.getToken());
-        HttpHeaders cookies = cookieService.createAuthCookies(authRes.getAccessToken(), authRes.getRefreshToken());
+        HttpHeaders headers = cookieService.createAuthCookies(authRes.getAccessToken(), authRes.getRefreshToken());
 
-        HashMap<String, Object> response = new HashMap<>();
-        response.put("success", authRes.getSuccess());
+        headers.setLocation(
+                URI.create("http://" + authDomain + "/home"));
 
-        return ResponseEntity.ok()
-                .headers(cookies)
-                .body(response);
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .headers(headers)
+                .build();
     }
 
     @PostMapping("/forgot-password")

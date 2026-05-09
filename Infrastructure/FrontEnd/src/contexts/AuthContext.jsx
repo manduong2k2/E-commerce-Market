@@ -12,7 +12,7 @@ export function AuthProvider({ children }) {
     const fetchProfile = async () => {
       try {
         const profile = await authService.profile();
-        if (profile.id) setUser(profile);
+        if (profile.data.id) setUser(profile.data);
         else setUser(null);
       } catch (err) {
         setUser(null);

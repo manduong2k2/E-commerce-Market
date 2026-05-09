@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import React, { useState, useContext } from 'react';
 import { authService } from '../../../services/authService';
 import { AuthContext } from '../../../contexts/AuthContext';
-import { showSuccess, showError } from '../../../components/popup';
+import { showSuccess, showError } from '../../../components/master/popup';
 import './LoginPage.css';
 
 export default function LoginPage() {
@@ -15,9 +15,9 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       var response = await authService.login({ email, password });
-      if (response.success) {
+      if (response.ok) {
         const user = await authService.profile();
-        setUser(user);
+        setUser(user.data);
         showSuccess('Login successful!', 'Welcome back');
         setTimeout(() => {
           navigate('/home');

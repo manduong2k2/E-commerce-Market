@@ -10,7 +10,6 @@ class HttpClient implements HttpClientInterface
 {
     protected array $defaultHeaders = [
         'accept' => 'application/json',
-        'content-type' => 'application/json',
     ];
 
     protected ?string $baseUrl = null;
@@ -28,17 +27,60 @@ class HttpClient implements HttpClientInterface
 
         $client = Http::withHeaders($headers)
             ->timeout(300)
-            ->retry(0);
+            ->retry(0)
+            ->withoutVerifying(); // DEV ONLY
 
         if ($this->baseUrl) {
             $client = $client->baseUrl($this->baseUrl);
         }
 
+        $data = $options['data'] ?? [];
+
+        // ========================
+        // MULTIPART
+        // ========================
+
+        if (isset($data['multipart'])) {
+
+            $formData = [];
+
+            foreach ($data['multipart'] as $part) {
+
+                // FILE
+                if (isset($part['filename'])) {
+
+                    $client = $client->attach(
+                        $part['name'],
+                        $part['contents'],
+                        $part['filename']
+                    );
+
+                    continue;
+                }
+
+                // NORMAL FIELD
+                $formData[$part['name']] = $part['contents'];
+            }
+
+            $response = match ($method) {
+                'GET'    => $client->get($url, $options['query'] ?? []),
+                'POST'   => $client->post($url, $formData),
+                'PUT'    => $client->put($url, $formData),
+                'DELETE' => $client->delete($url, $formData),
+            };
+
+            return $this->handle($response);
+        }
+
+        // ========================
+        // JSON REQUEST
+        // ========================
+
         $response = match ($method) {
             'GET'    => $client->get($url, $options['query'] ?? []),
-            'POST'   => $client->post($url, $options['data'] ?? []),
-            'PUT'    => $client->put($url, $options['data'] ?? []),
-            'DELETE' => $client->delete($url, $options['data'] ?? []),
+            'POST'   => $client->asJson()->post($url, $data),
+            'PUT'    => $client->asJson()->put($url, $data),
+            'DELETE' => $client->asJson()->delete($url, $data),
         };
 
         return $this->handle($response);
@@ -48,24 +90,56 @@ class HttpClient implements HttpClientInterface
     // PUBLIC METHODS
     // ========================
 
-    public function get(string $url, array $query = [], array $headers = [], array $cookies = []): array
-    {
-        return $this->request('GET', $url, compact('query', 'headers', 'cookies'));
+    public function get(
+        string $url,
+        array $query = [],
+        array $headers = [],
+        array $cookies = []
+    ): array {
+        return $this->request('GET', $url, compact(
+            'query',
+            'headers',
+            'cookies'
+        ));
     }
 
-    public function post(string $url, array $data = [], array $headers = [], array $cookies = []): array
-    {
-        return $this->request('POST', $url, compact('data', 'headers', 'cookies'));
+    public function post(
+        string $url,
+        array $data = [],
+        array $headers = [],
+        array $cookies = []
+    ): array {
+        return $this->request('POST', $url, compact(
+            'data',
+            'headers',
+            'cookies'
+        ));
     }
 
-    public function put(string $url, array $data = [], array $headers = [], array $cookies = []): array
-    {
-        return $this->request('PUT', $url, compact('data', 'headers', 'cookies'));
+    public function put(
+        string $url,
+        array $data = [],
+        array $headers = [],
+        array $cookies = []
+    ): array {
+        return $this->request('PUT', $url, compact(
+            'data',
+            'headers',
+            'cookies'
+        ));
     }
 
-    public function delete(string $url, array $data = [], array $headers = [], array $cookies = []): array
-    {
-        return $this->request('DELETE', $url, compact('data', 'headers', 'cookies'));
+    public function delete(
+        string $url,
+        array $data = [],
+        array $headers = [],
+        array $cookies = []
+    ): array {
+        return $this->request('DELETE', $url, compact(
+            'data',
+            'headers',
+            'cookies'
+        ));
     }
 
     // ========================
@@ -123,13 +197,15 @@ class HttpClient implements HttpClientInterface
     {
         return array_merge(
             $this->defaultHeaders,
-            $this->headers,   // extension headers
-            $headers          // runtime override
+            $this->headers,
+            $headers
         );
     }
 
-    protected function attachCookies(array $headers = [], array $cookies = []): array
-    {
+    protected function attachCookies(
+        array $headers = [],
+        array $cookies = []
+    ): array {
         $cookieParts = [];
 
         $cookies = array_merge($this->cookies, $cookies);
@@ -143,7 +219,6 @@ class HttpClient implements HttpClientInterface
         try {
             $user = user();
         } catch (\Exception $e) {
-            // User not authenticated, continue without token
         }
 
         if ($user && $user->getToken()) {
@@ -151,7 +226,9 @@ class HttpClient implements HttpClientInterface
         }
 
         if (!empty($cookieParts)) {
+
             $existing = Arr::get($headers, 'Cookie');
+
             $headers['Cookie'] = $existing
                 ? $existing . '; ' . implode('; ', $cookieParts)
                 : implode('; ', $cookieParts);

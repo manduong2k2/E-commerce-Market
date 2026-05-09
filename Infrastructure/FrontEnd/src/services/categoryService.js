@@ -3,20 +3,38 @@ import { GATEWAY_URL, CATALOG_SERVICE_NAME } from '../configs/constants';
 
 // helper chung
 async function request(path, options = {}) {
-  const { method = 'GET', body } = options;
-  const res = await fetch(`${GATEWAY_URL}/${CATALOG_SERVICE_NAME}${path}`, {
-    method,
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include', // gửi cookie HttpOnly nếu cần
-    body: body ? JSON.stringify(body) : undefined,
-  });
 
-  const contentType = res.headers.get('Content-Type') || '';
+  const { method = 'GET', body } = options;
+
+  const res = await fetch(
+    `${GATEWAY_URL}/${CATALOG_SERVICE_NAME}${path}`,
+    {
+      method,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: body ? JSON.stringify(body) : undefined,
+    }
+  );
+
+  const contentType =
+    res.headers.get('Content-Type') || '';
+
+  let data;
+
   if (contentType.includes('application/json')) {
-    return res.json();
+    data = await res.json();
   } else {
-    return res.text();
+    data = await res.text();
   }
+
+  return {
+    ok: res.ok,
+    status: res.status,
+    headers: res.headers,
+    data
+  };
 }
 
 // ===== Category APIs =====

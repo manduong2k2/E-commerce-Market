@@ -2,70 +2,123 @@
 
 namespace App\Traits\Model;
 
-use App\Models\File;
+use App\Facades\HttpClientInterface;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 
 trait HasFiles
 {
-    public function files()
+    protected string $storageApiUrl;    
+
+    public function __construct()
     {
-        return $this->morphMany(File::class, 'model');
+        $this->storageApiUrl = config('gateway.base_url') . '/' . config('services.service-list.storage') . '/api/files';
+        parent::__construct();
     }
 
-    public function uploadFile(UploadedFile $file, array $extra = []): File
+    protected function getHttpClient(): HttpClientInterface
     {
-        $originalName = $file->getClientOriginalName();
-        $generatedName = now()->timestamp . '_' . $originalName;
+        return app(HttpClientInterface::class);
+    }
 
-        $path = $file->storeAs('attachments', $generatedName, 'public');
+    public function uploadFile(UploadedFile $file): array
+    {
+        $entityType = strtolower(class_basename($this));
+        $response = $this->getHttpClient()->post(
+            $this->storageApiUrl,
+            [
+                'multipart' => [
+                    [
+                        'name' => 'file',
+                        'contents' => fopen($file->getPathname(), 'r'),
+                        'filename' => $file->getClientOriginalName(),
+                    ],
+                    [
+                        'name' => 'suffix',
+                        'contents' => $entityType,
+                    ],
+                    [
+                        'name' => 'entityType',
+                        'contents' => $entityType,
+                    ],
+                    [
+                        'name' => 'entityId',
+                        'contents' => $this->id,
+                    ],
+                ],
+            ]
+        );
 
-        return $this->files()->create([
-            'filename' => $originalName,
-            'path' => $path,
-            'mime_type' => $file->getClientMimeType(),
-            'size' => $file->getSize(),
-        ] + $extra);
+        return [
+            'url' => $response['path']
+        ];
     }
 
     public function getFiles(): array
     {
-        return $this->files->map(function ($file) {
-            return [
-                'id' => $file->id,
-                'filename' => $file->filename,
-                'url' => Storage::disk('public')->url($file->path),
-                'mime_type' => $file->mime_type,
-                'size' => $file->size,
-            ];
-        })->toArray();
+        $entityType = strtolower(class_basename($this));
+        $entityId = $this->id;
+
+        $response = $this->getHttpClient()->get($this->storageApiUrl, [
+            'entityType' => $entityType,
+            'entityId' => $entityId,
+        ]);
+
+        return $response;
     }
 
     /**
-     * Delete an attachment, including the physical file.
+     * Delete an attachment from remote storage.
      */
-    public function deleteAttachment(string $attachmentId, bool $deleteFile = true): bool
+    public function deleteAttachment(string $fileUrl): bool
     {
-        $attachment = $this->files()->findOrFail($attachmentId);
-
-        if ($deleteFile && Storage::disk('public')->exists($attachment->path)) {
-            Storage::disk('public')->delete($attachment->path);
-        }
-
-        return $attachment->delete();
+        $this->deleteRemoteFile($fileUrl);
+        return true;
     }
 
     /**
      * Download an attachment file.
      */
-    public function downloadAttachment(string $attachmentId)
+    public function downloadAttachment(string $fileUrl)
     {
-        $attachment = $this->files()->findOrFail($attachmentId);
+        $response = $this->getHttpClient()->get($this->getFileUrl($fileUrl));
 
-        if (Storage::disk('public')->exists($attachment->path)) {
-            return Storage::disk('public')->download($attachment->path, $attachment->filename);
+        if ($response->getStatusCode() !== 200) {
+            throw new \Exception('File not found');
         }
 
-        throw new \Exception('File not found');
+        return $response->getBody()->getContents();
+    }
+
+    /**
+     * Get file URL from storage API.
+     */
+    protected function getFileUrl(string $path): string
+    {
+        // Extract the file identifier from the path if needed
+        // Assuming path contains the full URL or identifier
+        if (str_starts_with($path, 'http')) {
+            return $path;
+        }
+
+        return $this->storageApiUrl . '/' . ltrim($path, '/');
+    }
+
+    /**
+     * Delete file from remote storage.
+     */
+    protected function deleteRemoteFile(string $path): void
+    {
+        $url = $this->getFileUrl($path);
+
+        $response = $this->getHttpClient()->delete($this->storageApiUrl, [
+            'query' => [
+                'url' => urlencode($path),
+            ],
+        ]);
+
+        if ($response->getStatusCode() !== 200) {
+            // Log error but don't throw exception to avoid breaking database deletion
+            \Log::error('Failed to delete remote file: ' . $path);
+        }
     }
 }

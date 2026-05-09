@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Product;
 
+use App\Http\Resources\File\FileResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -16,7 +17,7 @@ class ProductShortResource extends JsonResource
             'brand'         => $this->brand ? $this->brand->name : null,
             'priceMin'      => $this->variants->min('price'),
             'priceMax'      => $this->variants->max('price'),
-            'files'         => $this->getFiles(),
+            'files'         => FileResource::collection($this->getFiles()),
         ];
     }
 }

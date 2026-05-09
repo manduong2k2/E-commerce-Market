@@ -6,7 +6,6 @@ import './Navbar.css';
 
 export default function Navbar({ onToggleSidebar, sidebarExpanded }) {
   const { user, setUser } = useContext(AuthContext);
-  const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
@@ -33,7 +32,7 @@ export default function Navbar({ onToggleSidebar, sidebarExpanded }) {
       <div className="navbar-right">
         {user ? (
           <>
-            <span className="navbar-user">Hi, {user.name}</span>
+            <span className="navbar-user">Welcome, {user.name}</span>
             <button className="navbar-btn" onClick={handleLogout}>
               Logout
             </button>

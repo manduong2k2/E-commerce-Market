@@ -14,10 +14,10 @@ function ProductList() {
       try {
         setLoading(true);
         const response = await productService.getAll();
-        setProducts(response.data || response);
+        setProducts(response.data.data || response);
       } catch (err) {
-        console.error('Lỗi khi lấy danh sách sản phẩm:', err);
-        setError('Không thể tải sản phẩm');
+        console.error('Error fetching products:', err);
+        setError('Cannot load products');
       } finally {
         setLoading(false);
       }
@@ -31,7 +31,7 @@ function ProductList() {
       <div className="product-list-container">
         <div className="loading-container">
           <div className="spinner"></div>
-          <p>Đang tải sản phẩm...</p>
+          <p>Loading products...</p>
         </div>
       </div>
     );
@@ -50,14 +50,14 @@ function ProductList() {
   return (
     <div className="product-list-container">
       <div className="list-header">
-        <h2>Danh sách sản phẩm</h2>
+        <h2>Product List</h2>
       </div>
       
       {products.length === 0 ? (
         <div className="empty-state">
           <div className="empty-icon">📦</div>
-          <h3>Chưa có sản phẩm nào</h3>
-          <p>Vui lòng quay lại sau</p>
+          <h3>No products available</h3>
+          <p>Please check back later</p>
         </div>
       ) : (
         <div className="product-grid">

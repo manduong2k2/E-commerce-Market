@@ -1,15 +1,21 @@
 package com.e_com.StorageService.Controller;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.e_com.StorageService.Contract.IFileService;
+import com.e_com.StorageService.Entity.File;
 import com.e_com.StorageService.Validation.UploadRequest;
 
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/api")
@@ -17,8 +23,8 @@ public class StorageController {
     @Autowired
     private IFileService fileService;
 
-    @GetMapping("/files")
-    public ResponseEntity<byte[]> getFile(@RequestParam String url) throws IOException {
+    @GetMapping("/files/{*url}")
+    public ResponseEntity<byte[]> getFile(@PathVariable String url) throws IOException {
         byte[] data = fileService.getFile(url);
 
         return ResponseEntity.ok()
@@ -26,9 +32,17 @@ public class StorageController {
                 .body(data);
     }
 
+    @GetMapping("/files")
+    public List<File> getFiles(@RequestParam String entityType, @RequestParam String entityId) {
+        return fileService.getFiles(entityType, java.util.UUID.fromString(entityId));
+    }
+    
     @PostMapping("/files")
-    public String uploadFile(@Valid @ModelAttribute UploadRequest request) throws IOException {
-        return fileService.uploadFile(request.getFile(), request.getSuffix());
+    public ResponseEntity<HashMap<String, String>> uploadFile(@Valid @ModelAttribute UploadRequest request) throws IOException {
+        String path = fileService.uploadFile(request.getFile(), request.getSuffix(), request.getEntityType(), request.getEntityId());
+        HashMap<String, String> response = new HashMap<>();
+        response.put("path", path);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/files")

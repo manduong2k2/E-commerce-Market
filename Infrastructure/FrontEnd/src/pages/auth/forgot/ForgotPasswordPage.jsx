@@ -27,9 +27,9 @@ export default function ForgotPasswordPage() {
     const newErrors = {};
 
     if (!email.trim()) {
-      newErrors.email = 'Vui lòng nhập email';
+      newErrors.email = 'Please enter email';
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Email không hợp lệ';
+      newErrors.email = 'Invalid email format';
     }
 
     setErrors(newErrors);
@@ -50,11 +50,11 @@ export default function ForgotPasswordPage() {
       if (response.success || response.message) {
         setSubmitted(true);
       } else {
-        setErrors({ email: 'Không tìm thấy email trong hệ thống' });
+        setErrors({ email: 'Email not found in system' });
       }
     } catch (err) {
       console.error('Forgot password error:', err);
-      setErrors({ email: err.message || 'Có lỗi xảy ra, vui lòng thử lại' });
+      setErrors({ email: err.message || 'An error occurred, please try again' });
     } finally {
       setLoading(false);
     }
@@ -71,9 +71,9 @@ export default function ForgotPasswordPage() {
       <div className="forgot-form">
         {!submitted ? (
           <>
-            <h2>Quên mật khẩu</h2>
+            <h2>Forgot Password</h2>
             <p className="forgot-description">
-              Nhập email của bạn để nhận liên kết đặt lại mật khẩu
+              Enter your email to receive password reset link
             </p>
             
             <form onSubmit={handleSubmit}>
@@ -90,28 +90,28 @@ export default function ForgotPasswordPage() {
               </div>
 
               <button type="submit" className="forgot-btn" disabled={loading}>
-                {loading ? 'Đang gửi...' : 'Gửi liên kết đặt lại'}
+                {loading ? 'Sending...' : 'Send Reset Link'}
               </button>
             </form>
           </>
         ) : (
           <div className="success-message">
             <div className="success-icon">✓</div>
-            <h2>Kiểm tra email của bạn!</h2>
+            <h2>Check your email!</h2>
             <p>
-              Chúng tôi đã gửi liên kết đặt lại mật khẩu đến<br />
+              We have sent password reset link to<br />
               <strong>{email}</strong>
             </p>
             <p className="success-note">
-              Nếu bạn không nhận được email trong vài phút, hãy kiểm tra thư mục spam.
+              If you don't receive email within few minutes, please check your spam folder.
             </p>
             
             <div className="success-actions">
               <button onClick={handleReset} className="reset-btn">
-                Gửi lại
+                Send Again
               </button>
               <Link to="/login" className="back-to-login">
-                Quay lại đăng nhập
+                Back to Login
               </Link>
             </div>
           </div>
@@ -119,7 +119,7 @@ export default function ForgotPasswordPage() {
 
         {!submitted && (
           <div className="back-to-login">
-            <Link to="/login">← Quay lại đăng nhập</Link>
+            <Link to="/login">← Back to Login</Link>
           </div>
         )}
       </div>

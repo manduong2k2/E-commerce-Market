@@ -16,4 +16,8 @@ public class UploadRequest {
 
     @NotNull(message = "Suffix is required")
     private String suffix;
+
+    private String entityType;
+    
+    private java.util.UUID entityId;
 }

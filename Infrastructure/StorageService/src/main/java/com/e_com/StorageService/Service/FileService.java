@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -24,7 +25,7 @@ public class FileService implements IFileService {
     private IFileRepository fileRepository;
 
     @Override
-    public String uploadFile(MultipartFile file, String suffix) throws IOException {
+    public String uploadFile(MultipartFile file, String suffix, String entityType, UUID entityId) throws IOException {
         if (file.isEmpty()) {
             throw new RuntimeException("File is empty");
         }
@@ -39,7 +40,7 @@ public class FileService implements IFileService {
         Files.createDirectories(path.getParent());
         Files.write(path, file.getBytes());
 
-        File fileEntity = new File(suffix, file.getSize(), originalName, fileName, extension);
+        File fileEntity = new File(suffix, file.getSize(), originalName, fileName, extension, entityType, entityId);
         fileRepository.save(fileEntity);
 
         return suffix + "/" + fileName;
@@ -50,6 +51,11 @@ public class FileService implements IFileService {
         Path path = Paths.get(ROOT, fileName);
         System.out.println(path);
         return Files.readAllBytes(path);
+    }
+
+    @Override
+    public List<File> getFiles(String entityType, UUID entityId) {
+        return fileRepository.findByEntityTypeAndEntityId(entityType, entityId);
     }
 
     @Override

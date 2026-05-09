@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use App\Http\Repositories\ProductRepositoryInterface;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 
 class ProductService implements ProductServiceInterface
@@ -21,7 +22,17 @@ class ProductService implements ProductServiceInterface
 
     public function createProduct(array $data)
     {
-        return $this->ProductRepository->create($data);
+        $product = $this->ProductRepository->create($data);
+
+        $files = Arr::get($data, 'files', []);
+
+        if (!empty($files)) {
+            foreach ($files as $file) {
+                $product->uploadFile($file, 'products');
+            }
+        }
+
+        return $product;
     }
 
     public function updateProduct($id, array $data)

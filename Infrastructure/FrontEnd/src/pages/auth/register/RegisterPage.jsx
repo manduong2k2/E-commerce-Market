@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../../../services/authService';
+import { showSuccess, showError } from '../../../components/master/popup';
 import './RegisterPage.css';
 
 export default function RegisterPage() {
@@ -36,29 +37,29 @@ export default function RegisterPage() {
     const newErrors = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Vui lòng nhập họ tên';
+      newErrors.name = 'Please enter name';
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = 'Vui lòng nhập email';
+      newErrors.email = 'Please enter email';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email không hợp lệ';
+      newErrors.email = 'Invalid email format';
     }
 
     if (!formData.password) {
-      newErrors.password = 'Vui lòng nhập mật khẩu';
+      newErrors.password = 'Please enter password';
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Mật khẩu phải có ít nhất 6 ký tự';
+      newErrors.password = 'Password must be at least 6 characters';
     }
 
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'Vui lòng xác nhận mật khẩu';
+      newErrors.confirmPassword = 'Please confirm password';
     } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Mật khẩu xác nhận không khớp';
+      newErrors.confirmPassword = 'Passwords do not match';
     }
 
     if (formData.phone && !/^\d{10,11}$/.test(formData.phone.replace(/\s/g, ''))) {
-      newErrors.phone = 'Số điện thoại không hợp lệ';
+      newErrors.phone = 'Invalid phone number';
     }
 
     setErrors(newErrors);
@@ -67,7 +68,7 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -76,16 +77,23 @@ export default function RegisterPage() {
     try {
       const { confirmPassword, ...registerData } = formData;
       const response = await authService.register(registerData);
-      
-      if (response.success || response.message) {
-        alert('Đăng ký thành công! Vui lòng đăng nhập.');
+
+      if (response.ok) {
+        showSuccess('Registration successful!', 'Welcome to our platform');
         navigate('/login');
+      }
+      else if (response.data && response.data.errors && typeof response.data.errors === 'object') {
+        const backendErrors = {};
+        Object.keys(response.data.errors).forEach(field => {
+          backendErrors[field] = response.data.errors[field];
+        });
+        setErrors(backendErrors);
       } else {
-        alert('Đăng ký thất bại! Vui lòng thử lại.');
+        showError('Registration failed!' + (response.data.message ? ' - ' + response.data.message : ''), 'Please try again');
       }
     } catch (err) {
       console.error('Registration error:', err);
-      alert(err.message || 'Đăng ký thất bại! Vui lòng thử lại.');
+      showError('Registration failed!', err.message || 'Please try again');
     } finally {
       setLoading(false);
     }
@@ -94,13 +102,13 @@ export default function RegisterPage() {
   return (
     <div className="register-container">
       <form onSubmit={handleSubmit} className="register-form">
-        <h2>Đăng ký tài khoản</h2>
-        
+        <h2>Create Account</h2>
+
         <div className="form-group">
           <input
             type="text"
             name="name"
-            placeholder="Họ và tên"
+            placeholder="Name"
             value={formData.name}
             onChange={handleChange}
             className={errors.name ? 'error' : ''}
@@ -126,7 +134,7 @@ export default function RegisterPage() {
           <input
             type="password"
             name="password"
-            placeholder="Mật khẩu"
+            placeholder="Password"
             value={formData.password}
             onChange={handleChange}
             className={errors.password ? 'error' : ''}
@@ -139,7 +147,7 @@ export default function RegisterPage() {
           <input
             type="password"
             name="confirmPassword"
-            placeholder="Xác nhận mật khẩu"
+            placeholder="Confirm Password"
             value={formData.confirmPassword}
             onChange={handleChange}
             className={errors.confirmPassword ? 'error' : ''}
@@ -152,7 +160,7 @@ export default function RegisterPage() {
           <input
             type="tel"
             name="phone"
-            placeholder="Số điện thoại (tùy chọn)"
+            placeholder="Phone (optional)"
             value={formData.phone}
             onChange={handleChange}
             className={errors.phone ? 'error' : ''}
@@ -164,18 +172,18 @@ export default function RegisterPage() {
           <input
             type="text"
             name="address"
-            placeholder="Địa chỉ (tùy chọn)"
+            placeholder="Address (optional)"
             value={formData.address}
             onChange={handleChange}
           />
         </div>
 
         <button type="submit" className="register-btn" disabled={loading}>
-          {loading ? 'Đang đăng ký...' : 'Đăng ký'}
+          {loading ? 'Registering...' : 'Register'}
         </button>
 
         <div className="login-link">
-          Đã có tài khoản? <Link to="/login">Đăng nhập ngay</Link>
+          Already have an account? <Link to="/login">Login now</Link>
         </div>
       </form>
     </div>

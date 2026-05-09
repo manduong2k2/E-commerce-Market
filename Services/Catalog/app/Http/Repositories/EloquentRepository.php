@@ -159,11 +159,6 @@ abstract class EloquentRepository implements EloquentRepositoryInterface
 
                     $nested = [];
 
-                    if ($item instanceof UploadedFile) {
-                        $model->uploadFile($item);
-                        continue;
-                    }
-
                     foreach ($item as $key => $value) {
                         if (is_array($value) && method_exists($relationObj->getRelated(), $key)) {
                             $nested[$key] = $value;

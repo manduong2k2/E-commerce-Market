@@ -14,35 +14,35 @@ export default function Footer() {
                 <div className="footer-section">
                     <h2 className="footer-logo">E-Com</h2>
                     <p className="footer-description">
-                        Nền tảng thương mại điện tử đa ngành, mang đến trải nghiệm mua sắm nhanh chóng và tiện lợi.
+                        A multi-category e-commerce platform offering a fast and convenient shopping experience.
                     </p>
                 </div>
 
                 {/* Categories */}
                 <div className="footer-section">
-                    <h3>Danh mục</h3>
+                    <h3>Categories</h3>
                     <ul>
-                        <li>Điện tử</li>
-                        <li>Thời trang</li>
-                        <li>Gia dụng</li>
-                        <li>Sách</li>
+                        <li>Electronics</li>
+                        <li>Fashion</li>
+                        <li>Home & Kitchen</li>
+                        <li>Books</li>
                     </ul>
                 </div>
 
                 {/* Support */}
                 <div className="footer-section">
-                    <h3>Hỗ trợ</h3>
+                    <h3>Support</h3>
                     <ul>
-                        <li>Trung tâm trợ giúp</li>
-                        <li>Chính sách đổi trả</li>
-                        <li>Giao hàng</li>
-                        <li>Bảo mật</li>
+                        <li>Help Center</li>
+                        <li>Return Policy</li>
+                        <li>Shipping Info</li>
+                        <li>Security</li>
                     </ul>
                 </div>
 
                 {/* Contact */}
                 <div className="footer-section">
-                    <h3>Liên hệ</h3>
+                    <h3>Contact</h3>
 
                     <p>
                         <FontAwesomeIcon icon={faEnvelope} className="icon" />

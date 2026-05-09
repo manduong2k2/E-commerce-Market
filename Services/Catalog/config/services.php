@@ -35,4 +35,7 @@ return [
         ],
     ],
 
+    'service-list' => [
+        'storage' => 'storage-service',
+    ],
 ];

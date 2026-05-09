@@ -17,10 +17,10 @@ export default function CategoryList() {
     try {
       setLoading(true);
       const response = await categoryService.getAll();
-      setCategories(response.data || response);
+      setCategories(response.data.data || response);
     } catch (err) {
       console.error('Error fetching categories:', err);
-      setError('Không thể tải danh mục');
+      setError('Cannot load categories');
     } finally {
       setLoading(false);
     }
@@ -29,13 +29,13 @@ export default function CategoryList() {
   return (
     <div className="category-list-container user-view">
       <div className="list-header">
-        <h2>Danh mục sản phẩm</h2>
+        <h2>Product Categories</h2>
       </div>
 
       {loading ? (
         <div className="loading-container">
           <div className="spinner"></div>
-          <p>Đang tải danh mục...</p>
+          <p>Loading categories...</p>
         </div>
       ) : error ? (
         <div className="error-state">
@@ -44,8 +44,8 @@ export default function CategoryList() {
       ) : categories.length === 0 ? (
         <div className="empty-state">
           <div className="empty-icon">📦</div>
-          <h3>Chưa có danh mục nào</h3>
-          <p>Vui lòng quay lại sau</p>
+          <h3>No categories available</h3>
+          <p>Please check back later</p>
         </div>
       ) : (
         <div className="category-grid">
