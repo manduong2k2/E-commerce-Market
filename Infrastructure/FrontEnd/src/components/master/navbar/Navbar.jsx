@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../../contexts/AuthContext';
 import { authService } from '../../../services/authService';
@@ -6,6 +6,8 @@ import './Navbar.css';
 
 export default function Navbar({ onToggleSidebar, sidebarExpanded }) {
   const { user, setUser } = useContext(AuthContext);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
 
   const handleLogout = async () => {
     try {
@@ -17,6 +19,29 @@ export default function Navbar({ onToggleSidebar, sidebarExpanded }) {
       alert('Logout thất bại!');
     }
   };
+
+  const toggleDropdown = () => {
+    setShowDropdown(!showDropdown);
+  };
+
+  const handleMenuClick = (path) => {
+    setShowDropdown(false);
+    window.location.href = path;
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showDropdown && dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [showDropdown]);
 
   return (
     <nav className="navbar">
@@ -32,10 +57,28 @@ export default function Navbar({ onToggleSidebar, sidebarExpanded }) {
       <div className="navbar-right">
         {user ? (
           <>
-            <span className="navbar-user">Welcome, {user.name}</span>
-            <button className="navbar-btn" onClick={handleLogout}>
-              Logout
-            </button>
+            <div className="dropdown" ref={dropdownRef}>
+              <button className="dropdown-toggle" onClick={toggleDropdown}>
+                Welcome, {user.name} <i className="fas fa-chevron-down"></i>
+              </button>
+              {showDropdown && (
+                <div className={`dropdown-menu ${showDropdown ? 'show' : ''} animate`}>
+                  <button className="dropdown-item" onClick={() => handleMenuClick('/profile')}>
+                    <i className="fas fa-user"></i> Profile
+                  </button>
+                  <button className="dropdown-item" onClick={() => handleMenuClick('/vendor-management')}>
+                    <i className="fas fa-store"></i> Vendor Management
+                  </button>
+                  <button className="dropdown-item" onClick={() => handleMenuClick('/order-history')}>
+                    <i className="fas fa-shopping-cart"></i> Order History
+                  </button>
+                  <div className="dropdown-divider"></div>
+                  <button className="dropdown-item" onClick={handleLogout}>
+                    <i className="fas fa-sign-out-alt"></i> Logout
+                  </button>
+                </div>
+              )}
+            </div>
           </>
         ) : (
           <>

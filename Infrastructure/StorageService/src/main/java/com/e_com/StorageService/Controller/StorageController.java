@@ -10,11 +10,10 @@ import org.springframework.web.bind.annotation.*;
 
 import com.e_com.StorageService.Contract.IFileService;
 import com.e_com.StorageService.Entity.File;
+import com.e_com.StorageService.Validation.UploadBatchRequest;
 import com.e_com.StorageService.Validation.UploadRequest;
 
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
@@ -42,6 +41,14 @@ public class StorageController {
         String path = fileService.uploadFile(request.getFile(), request.getSuffix(), request.getEntityType(), request.getEntityId());
         HashMap<String, String> response = new HashMap<>();
         response.put("path", path);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/file-batch")
+    public ResponseEntity<HashMap<String, Object>> uploadMultipleFiles(@Valid @ModelAttribute UploadBatchRequest request) throws IOException {
+        HashMap<String, Object> response = new HashMap<>();
+        List<String> paths = fileService.uploadMultipleFiles(request.getFiles(), request.getSuffix(), request.getEntityType(), request.getEntityId());
+        response.put("paths", paths);
         return ResponseEntity.ok(response);
     }
 

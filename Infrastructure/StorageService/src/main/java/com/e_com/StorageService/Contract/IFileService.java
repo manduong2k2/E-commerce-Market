@@ -11,6 +11,8 @@ import com.e_com.StorageService.Entity.File;
 public interface IFileService {
     public String uploadFile(MultipartFile file, String suffix, String entityType, UUID entityId) throws IOException;
 
+    public List<String> uploadMultipleFiles(List<MultipartFile> files, String suffix, String entityType, UUID entityId) throws IOException;
+
     byte[] getFile(String fileName) throws IOException;
 
     List<File> getFiles(String entityType, UUID entityId);

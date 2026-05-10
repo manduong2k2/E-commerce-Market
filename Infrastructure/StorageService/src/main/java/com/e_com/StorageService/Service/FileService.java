@@ -47,6 +47,17 @@ public class FileService implements IFileService {
     }
 
     @Override
+    public List<String> uploadMultipleFiles(List<MultipartFile> files, String suffix, String entityType, UUID entityId) throws IOException {
+        return files.stream().map(file -> {
+            try {
+                return uploadFile(file, suffix, entityType, entityId);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }).toList();
+    }
+
+    @Override
     public byte[] getFile(String fileName) throws IOException {
         Path path = Paths.get(ROOT, fileName);
         System.out.println(path);
