@@ -1,4 +1,4 @@
-package com.e_com.Auth.Application.Service;
+package com.e_com.Auth.Infrastructure.Messaging.Publisher;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;

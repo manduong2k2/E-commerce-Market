@@ -9,6 +9,7 @@ import com.e_com.Auth.Domain.Constants.ErrorMessage;
 import com.e_com.Auth.Domain.Constants.UserStatus;
 import com.e_com.Auth.Domain.Contract.IAuthService;
 import com.e_com.Auth.Domain.Model.User;
+import com.e_com.Auth.Infrastructure.Messaging.Publisher.MessagePublisher;
 import com.e_com.Auth.Infrastructure.Persistence.Entity.Role;
 import com.e_com.Auth.Infrastructure.Persistence.Repository.IRoleRepository;
 import com.e_com.Auth.Infrastructure.Persistence.Repository.IUserRepository;
