@@ -1,4 +1,4 @@
-package com.e_com.CatalogService.Shared.Domain.Contract;
+package com.e_com.CatalogService.Brand.Domain.Contract;
 
 import java.util.List;
 import java.util.UUID;

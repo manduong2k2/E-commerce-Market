@@ -23,7 +23,7 @@ export default function LoginPage() {
           navigate('/home');
         }, 1000);
       } else {
-        showError(response.message || 'Login failed', 'Login Error');
+        showError(response.data.message || 'Login failed', 'Login Error');
       }
     } catch (err) {
       console.log(err);

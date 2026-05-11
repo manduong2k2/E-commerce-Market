@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.e_com.CatalogService.Brand.Application.DTO.Request.CreateBrandRequest;
 import com.e_com.CatalogService.Brand.Application.DTO.Request.UpdateBrandRequest;
 import com.e_com.CatalogService.Brand.Application.DTO.Response.BrandResponse;
-import com.e_com.CatalogService.Shared.Domain.Contract.IBrandService;
+import com.e_com.CatalogService.Brand.Domain.Contract.IBrandService;
 import com.e_com.CatalogService.Shared.Infrastructure.Annotation.Auth.Authenticated;
 
 import jakarta.validation.Valid;

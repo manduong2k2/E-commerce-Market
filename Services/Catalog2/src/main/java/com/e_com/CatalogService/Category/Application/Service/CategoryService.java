@@ -11,8 +11,8 @@ import com.e_com.CatalogService.Category.Application.DTO.Request.CreateCategoryR
 import com.e_com.CatalogService.Category.Application.DTO.Request.UpdateCategoryRequest;
 import com.e_com.CatalogService.Category.Application.DTO.Response.CategoryResponse;
 import com.e_com.CatalogService.Category.Domain.Contract.ICategoryRepository;
+import com.e_com.CatalogService.Category.Domain.Contract.ICategoryService;
 import com.e_com.CatalogService.Category.Domain.Model.Category;
-import com.e_com.CatalogService.Shared.Domain.Contract.ICategoryService;
 import com.e_com.CatalogService.Shared.Infrastructure.Event.EventOptions;
 import com.e_com.CatalogService.Shared.Infrastructure.Event.IEventPublisher;
 

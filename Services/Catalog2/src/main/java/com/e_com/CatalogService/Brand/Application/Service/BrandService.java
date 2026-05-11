@@ -11,8 +11,8 @@ import com.e_com.CatalogService.Brand.Application.DTO.Request.CreateBrandRequest
 import com.e_com.CatalogService.Brand.Application.DTO.Request.UpdateBrandRequest;
 import com.e_com.CatalogService.Brand.Application.DTO.Response.BrandResponse;
 import com.e_com.CatalogService.Brand.Domain.Contract.IBrandRepository;
+import com.e_com.CatalogService.Brand.Domain.Contract.IBrandService;
 import com.e_com.CatalogService.Brand.Domain.Model.Brand;
-import com.e_com.CatalogService.Shared.Domain.Contract.IBrandService;
 import com.e_com.CatalogService.Shared.Infrastructure.Event.EventOptions;
 import com.e_com.CatalogService.Shared.Infrastructure.Event.IEventPublisher;
 

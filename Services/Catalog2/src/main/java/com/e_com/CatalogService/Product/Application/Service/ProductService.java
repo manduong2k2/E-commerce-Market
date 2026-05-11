@@ -7,15 +7,14 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.e_com.CatalogService.Product.Application.DTO.Request.CreateProductRequest;
 import com.e_com.CatalogService.Product.Application.DTO.Request.UpdateProductRequest;
 import com.e_com.CatalogService.Product.Application.DTO.Response.ProductResponse;
 import com.e_com.CatalogService.Product.Domain.Constants.ProductStatusEnum;
 import com.e_com.CatalogService.Product.Domain.Contract.IProductRepository;
+import com.e_com.CatalogService.Product.Domain.Contract.IProductService;
 import com.e_com.CatalogService.Product.Domain.Model.Product;
-import com.e_com.CatalogService.Shared.Domain.Contract.IProductService;
 import com.e_com.CatalogService.Shared.Domain.Storage.IStorageService;
 import com.e_com.CatalogService.Shared.Infrastructure.Event.EventOptions;
 import com.e_com.CatalogService.Shared.Infrastructure.Event.IEventPublisher;

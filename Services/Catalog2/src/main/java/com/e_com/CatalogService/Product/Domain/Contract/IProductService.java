@@ -1,4 +1,4 @@
-package com.e_com.CatalogService.Shared.Domain.Contract;
+package com.e_com.CatalogService.Product.Domain.Contract;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,5 +19,4 @@ public interface IProductService {
     public ProductResponse updateProduct(UUID id, UpdateProductRequest request);
 
     public void deleteProduct(UUID id);
-
 }
