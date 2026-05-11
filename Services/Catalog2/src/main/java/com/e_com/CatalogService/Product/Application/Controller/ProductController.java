@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,24 +45,39 @@ public class ProductController {
         HashMap<String, Object> result = new HashMap<>();
         result.put("success", true);
         result.put("data", created);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @Authenticated
     @GetMapping("/{productId}")
-    public ProductResponse details(@PathVariable UUID productId) {
-        return productService.getProduct(productId);
+    public ResponseEntity<HashMap<String, Object>> details(@PathVariable UUID productId) {
+        ProductResponse product = productService.getProduct(productId);
+        
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("success", true);
+        result.put("data", product);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
     
     @Authenticated
     @PutMapping("/{productId}")
-    public ProductResponse update(@PathVariable UUID productId, @Valid @ModelAttribute UpdateProductRequest request) {
-        return productService.updateProduct(productId, request);
+    public ResponseEntity<HashMap<String, Object>> update(@PathVariable UUID productId, @Valid @ModelAttribute UpdateProductRequest request) {
+        ProductResponse updated = productService.updateProduct(productId, request);
+        
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("success", true);
+        result.put("data", updated);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
     
     @Authenticated
     @DeleteMapping("/{productId}")
-    public void delete(@PathVariable UUID productId) {
+    public ResponseEntity<HashMap<String, Object>> delete(@PathVariable UUID productId) {
         productService.deleteProduct(productId);
+        
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("success", true);
+        result.put("message", "Product deleted successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 }
