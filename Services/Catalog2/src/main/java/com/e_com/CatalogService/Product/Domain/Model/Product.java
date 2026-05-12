@@ -13,6 +13,7 @@ public class Product extends AggregateRoot<UUID> {
     private String description;
     private String code;
     private UUID brandId;
+    private List<UUID> categoryIds;
     private ProductStatus status;
     private List<ProductVariant> variants;
 
@@ -20,9 +21,10 @@ public class Product extends AggregateRoot<UUID> {
         super(UUID.randomUUID());
         this.status = new ProductStatus();
         this.variants = new ArrayList<>();
+        this.categoryIds = new ArrayList<>();
     }
 
-    public Product(UUID id, String name, String description, String code, UUID brandId, ProductStatus status, List<ProductVariant> variants) {
+    public Product(UUID id, String name, String description, String code, UUID brandId, ProductStatus status, List<ProductVariant> variants, List<UUID> categoryIds) {
         super(id);
         this.name = name;
         this.description = description;
@@ -30,6 +32,7 @@ public class Product extends AggregateRoot<UUID> {
         this.brandId = brandId;
         this.status = status;
         this.variants = variants;
+        this.categoryIds = categoryIds;
     }
 
     public String getName() {
@@ -70,6 +73,14 @@ public class Product extends AggregateRoot<UUID> {
     
     public void setVariants(List<ProductVariant> variants) {
         this.variants = variants;
+    }
+    
+    public List<UUID> getCategoryIds() {
+        return categoryIds;
+    }
+    
+    public void setCategoryIds(List<UUID> categoryIds) {
+        this.categoryIds = categoryIds;
     }
 
     public String getStatus() {

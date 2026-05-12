@@ -1,28 +1,21 @@
 package com.e_com.Auth.Infrastructure.Persistence.Entity;
 
-import java.time.LocalDateTime;
-
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.hibernate.annotations.SoftDelete;
-import org.hibernate.annotations.SoftDeleteType;
+
+import com.e_com.Shared.Infrastructure.Persistence.JpaEntity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @Data
 @Table(name = "users")
-@SoftDelete(columnName = "deleted_at", strategy = SoftDeleteType.TIMESTAMP)
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
-
+@EqualsAndHashCode(callSuper = false)
+public class User extends JpaEntity {
     @Column(unique = true, columnDefinition = "varchar(255)", nullable = false)
     private String email;
 
@@ -46,10 +39,6 @@ public class User {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Role> roles;
 
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-
     protected User() {
     }
 
@@ -69,7 +58,16 @@ public class User {
     }
 
     public com.e_com.Auth.Domain.Model.User toDomain() {
-        return new com.e_com.Auth.Domain.Model.User(id, email, password, status, name, avatar, phone,
-                roles.stream().map(Role::toDomain).collect(java.util.stream.Collectors.toSet()), createdAt);
+        return new com.e_com.Auth.Domain.Model.User(
+            this.getId(), 
+            email, 
+            password, 
+            name, 
+            avatar, 
+            phone, 
+            status, 
+            createdAt, 
+            roles != null ? roles.stream().map(Role::toDomain).collect(java.util.stream.Collectors.toSet()) : null
+        );
     }
 }

@@ -1,4 +1,4 @@
-package com.e_com.CatalogService.Shared.Domain;
+package com.e_com.Shared.Domain;
 
 import java.util.Objects;
 
@@ -11,10 +11,6 @@ public abstract class Entity<T> {
 
     public T getId() {
         return id;
-    }
-
-    public void setId(T id) {
-        this.id = id;
     }
 
     @Override

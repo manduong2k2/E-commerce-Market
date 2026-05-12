@@ -2,20 +2,26 @@ package com.e_com.CatalogService.Product.Domain.Model;
 
 import java.util.UUID;
 
-public class ExtraAttribute {
+import com.e_com.CatalogService.Shared.Domain.AggregateRoot;
+
+public class ExtraAttribute extends AggregateRoot<UUID> {
     private UUID productVariantId;
     private String key;
     private String value;
 
-    public ExtraAttribute() {}
+    public ExtraAttribute() {
+        super(UUID.randomUUID());
+    }
 
     public ExtraAttribute(UUID productVariantId, String key, String value) {
+        super(UUID.randomUUID());
         this.productVariantId = productVariantId;
         this.key = key;
         this.value = value;
     }
 
     public ExtraAttribute(String key, String value) {
+        super(UUID.randomUUID());
         this.key = key;
         this.value = value;
     }

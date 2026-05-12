@@ -50,13 +50,22 @@ public class AuthService implements IAuthService {
 
     @Transactional
     public RegisterResponse register(RegisterRequest req) throws MessagingException {
-        var user = new User(null ,req.getEmail(), encoder.encode(req.getPassword()), req.getName(), null, req.getPhone(), UserStatus.DEFAULT);
+        var user = new User();
+        user.setEmail(req.getEmail());
+        user.setPassword(encoder.encode(req.getPassword()));
+        user.setName(req.getName());
+        user.setPhone(req.getPhone());
+        user.setStatus(UserStatus.DEFAULT);
+
         var userEntity = user.toEntity();
         var clientRole = this.roleRepo.findByCode("CUSTOMER");
         var roles = new java.util.HashSet<Role>();
+
         roles.add(clientRole);
         userEntity.setRoles(roles);
+
         this.repo.save(userEntity);
+        
         sendActivationEmail(user.getEmail());
 
         return new RegisterResponse(true,

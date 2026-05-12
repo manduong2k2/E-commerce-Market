@@ -1,7 +1,6 @@
 package com.e_com.CatalogService.Product.Infrastructure.Persistence.Repository;
 
 import com.e_com.CatalogService.Product.Domain.Contract.IProductVariantRepository;
-import com.e_com.CatalogService.Product.Domain.Model.ProductVariant;
 import com.e_com.CatalogService.Product.Infrastructure.Persistence.Entity.ProductVariantEntity;
 
 import java.util.List;
@@ -19,56 +18,34 @@ public class ProductVariantRepository implements IProductVariantRepository {
     }
 
     @Override
-    public ProductVariant save(ProductVariant variant) {
-        ProductVariantEntity entity = toEntity(variant);
+    public ProductVariantEntity save(ProductVariantEntity variant) {
+        ProductVariantEntity entity = variant;
         ProductVariantEntity saved = jpaRepository.save(entity);
-        return toDomain(saved);
+        return saved;
     }
 
     @Override
-    public List<ProductVariant> findAll(){
-        return jpaRepository.findAll().stream()
-                .map(this::toDomain)
-                .toList();
+    public List<ProductVariantEntity> findAll(){
+        return jpaRepository.findAll();
     }
 
     @Override
-    public Optional<ProductVariant> findById(UUID id) {
-        return jpaRepository.findById(id).map(this::toDomain);
+    public Optional<ProductVariantEntity> findById(UUID id) {
+        return jpaRepository.findById(id);
     }
 
     @Override
-    public List<ProductVariant> findByName(String name) {
-        return jpaRepository.findByName(name).stream()
-                .map(this::toDomain)
-                .toList();
+    public List<ProductVariantEntity> findByName(String name) {
+        return jpaRepository.findByName(name);
     }
 
     @Override
-    public ProductVariant update(ProductVariant variant) {
-        ProductVariantEntity entity = toEntity(variant);
-        ProductVariantEntity saved = jpaRepository.save(entity);
-        return toDomain(saved);
+    public ProductVariantEntity update(ProductVariantEntity variant) {
+        return jpaRepository.save(variant);
     }
 
     @Override
     public void delete(UUID id) {
         jpaRepository.deleteById(id);
-    }
-
-    private ProductVariant toDomain(ProductVariantEntity entity) {
-        ProductVariant variant = new ProductVariant();
-        variant.setName(entity.getName());
-        variant.setCode(entity.getCode());
-        variant.setPrice(entity.getPrice());
-        return variant;
-    }
-
-    private ProductVariantEntity toEntity(ProductVariant variant) {
-        ProductVariantEntity entity = new ProductVariantEntity();
-        entity.setName(variant.getName());
-        entity.setCode(variant.getCode());
-        entity.setPrice(variant.getPrice().getValue());
-        return entity;
     }
 }

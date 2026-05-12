@@ -48,7 +48,7 @@ public class AuthController {
     private String authDomain;
 
     @PostMapping("/register")
-    public RegisterResponse register(@Valid @RequestBody(required = false) RegisterRequest req)
+    public RegisterResponse register(@Valid @ModelAttribute RegisterRequest req)
             throws MessagingException {
         return auth.register(req);
     }

@@ -5,7 +5,9 @@ import java.util.UUID;
 
 import org.springframework.web.multipart.MultipartFile;
 
-public class ProductVariant {
+import com.e_com.CatalogService.Shared.Domain.AggregateRoot;
+
+public class ProductVariant extends AggregateRoot<UUID> {
     private UUID id;
     private UUID productId;
     private String name;
@@ -14,10 +16,12 @@ public class ProductVariant {
     private List<ExtraAttribute> extraAttributes;
     private List<MultipartFile> files;
     
-    public ProductVariant() {}
+    public ProductVariant() {
+        super(UUID.randomUUID());
+    }
     
     public ProductVariant(UUID id, UUID productId, String name, String code, double price) {
-        this.id = id;
+        super(id);
         this.productId = productId;
         this.name = name;
         this.code = code;
@@ -26,7 +30,7 @@ public class ProductVariant {
     }
 
     public ProductVariant(String name, String code, double price, List<ExtraAttribute> extraAttributes) {
-        this.id = UUID.randomUUID();
+        super(UUID.randomUUID());
         this.productId = null;
         this.name = name;
         this.code = code;

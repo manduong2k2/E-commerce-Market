@@ -1,13 +1,16 @@
 package com.e_com.Auth.Infrastructure.Persistence.Entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+import com.e_com.Shared.Infrastructure.Persistence.JpaEntity;
 
 @Entity
 @Table(name = "roles")
-public class Role {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private java.util.UUID id;
+@Data
+@EqualsAndHashCode(callSuper = false)
+public class Role extends JpaEntity {
 
     @Column(unique = false, nullable = false)
     private String name;
@@ -25,8 +28,4 @@ public class Role {
     public com.e_com.Auth.Domain.Model.Role toDomain() {
         return new com.e_com.Auth.Domain.Model.Role(id, code, name);
     }
-
-    public java.util.UUID getId() { return id; }
-    public String getName() { return name; }
-    public String getCode() { return code; }
 }

@@ -4,18 +4,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.e_com.CatalogService.Product.Domain.Model.ProductVariant;
+import com.e_com.CatalogService.Product.Infrastructure.Persistence.Entity.ProductVariantEntity;
 
 public interface IProductVariantRepository {
-    ProductVariant save(ProductVariant variant);
+    ProductVariantEntity save(ProductVariantEntity variant);
 
-    List<ProductVariant> findAll();
+    List<ProductVariantEntity> findAll();
 
-    Optional<ProductVariant> findById(UUID id);
+    Optional<ProductVariantEntity> findById(UUID id);
 
-    List<ProductVariant> findByName(String name);
+    List<ProductVariantEntity> findByName(String name);
 
-    ProductVariant update(ProductVariant variant);
+    ProductVariantEntity update(ProductVariantEntity variant);
 
     void delete(UUID id);
 }
