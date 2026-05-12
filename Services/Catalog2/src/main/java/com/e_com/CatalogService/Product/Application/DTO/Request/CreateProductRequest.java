@@ -3,8 +3,8 @@ package com.e_com.CatalogService.Product.Application.DTO.Request;
 import java.util.List;
 import java.util.UUID;
 import com.e_com.CatalogService.Product.Domain.Model.Product;
-import com.e_com.CatalogService.Shared.Infrastructure.Annotation.Rules.Exist;
-import com.e_com.CatalogService.Shared.Infrastructure.Annotation.Rules.ExistList;
+import com.e_com.CatalogService.Shared.Application.Annotation.Rules.Exist;
+import com.e_com.CatalogService.Shared.Application.Annotation.Rules.ExistList;
 
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;

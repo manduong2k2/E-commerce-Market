@@ -1,4 +1,4 @@
-package com.e_com.CatalogService.Shared.Infrastructure.Annotation.Auth;
+package com.e_com.CatalogService.Shared.Application.Annotation.Auth;
 
 import java.lang.annotation.*;
 

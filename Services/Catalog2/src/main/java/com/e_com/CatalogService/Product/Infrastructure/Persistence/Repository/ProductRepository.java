@@ -7,42 +7,52 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.e_com.CatalogService.Product.Domain.Contract.IProductRepository;
+import com.e_com.CatalogService.Product.Domain.Model.Product;
 import com.e_com.CatalogService.Product.Infrastructure.Persistence.Entity.ProductEntity;
+import com.e_com.CatalogService.Shared.Domain.Contract.IMapper;
 
 @Repository
 public class ProductRepository implements IProductRepository {
 
     private final ProductJpaRepository jpaRepository;
+    private final IMapper<Product, ProductEntity> productMapper;
 
-    public ProductRepository(ProductJpaRepository jpaRepository) {
+    public ProductRepository(ProductJpaRepository jpaRepository, IMapper<Product, ProductEntity> productMapper) {
         this.jpaRepository = jpaRepository;
+        this.productMapper = productMapper;
     }
 
     @Override
-    public List<ProductEntity> findAll() {
+    public List<Product> findAll() {
         return jpaRepository.findAll().stream()
+                .map(productMapper::toDomain)
                 .toList();
     }
 
     @Override
-    public ProductEntity save(ProductEntity Product) {
-        ProductEntity saved = jpaRepository.save(Product);
-        return saved;
+    public Product save(Product Product) {
+        ProductEntity productEntity = productMapper.toEntity(Product);
+        ProductEntity saved = jpaRepository.save(productEntity);
+        return productMapper.toDomain(saved);
     }
 
     @Override
-    public Optional<ProductEntity> findById(UUID id) {
-        return jpaRepository.findById(id);
+    public Optional<Product> findById(UUID id) {
+        return jpaRepository.findById(id).map(productMapper::toDomain);
     }
 
     @Override
-    public List<ProductEntity> findByName(String name) {
-        return jpaRepository.findByName(name);
+    public List<Product> findByName(String name) {
+        return jpaRepository.findByName(name).stream()
+                .map(productMapper::toDomain)
+                .toList();
     }
     
     @Override
-    public ProductEntity update(ProductEntity Product) {
-        return jpaRepository.save(Product);
+    public Product update(Product Product) {
+        ProductEntity productEntity = productMapper.toEntity(Product);
+        ProductEntity updated = jpaRepository.save(productEntity);
+        return productMapper.toDomain(updated);
     }
     
     @Override

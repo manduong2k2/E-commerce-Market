@@ -18,7 +18,7 @@ public class Product extends AggregateRoot<UUID> {
     private List<ProductVariant> variants;
 
     public Product() {
-        super(UUID.randomUUID());
+        super(null);
         this.status = new ProductStatus();
         this.variants = new ArrayList<>();
         this.categoryIds = new ArrayList<>();

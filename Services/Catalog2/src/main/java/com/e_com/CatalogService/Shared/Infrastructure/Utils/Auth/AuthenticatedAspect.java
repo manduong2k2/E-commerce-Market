@@ -5,7 +5,7 @@ import org.aspectj.lang.annotation.*;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
-import com.e_com.CatalogService.Shared.Infrastructure.Annotation.Auth.Authenticated;
+import com.e_com.CatalogService.Shared.Application.Annotation.Auth.Authenticated;
 import com.e_com.CatalogService.Shared.Infrastructure.Constants.ErrorMessage;
 import com.e_com.CatalogService.Shared.Infrastructure.Constants.Http;
 

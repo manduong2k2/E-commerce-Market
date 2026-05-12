@@ -13,8 +13,8 @@ import com.e_com.CatalogService.Brand.Application.DTO.Response.BrandResponse;
 import com.e_com.CatalogService.Brand.Domain.Contract.IBrandRepository;
 import com.e_com.CatalogService.Brand.Domain.Contract.IBrandService;
 import com.e_com.CatalogService.Brand.Domain.Model.Brand;
+import com.e_com.CatalogService.Shared.Domain.Contract.IEventPublisher;
 import com.e_com.CatalogService.Shared.Infrastructure.Event.EventOptions;
-import com.e_com.CatalogService.Shared.Infrastructure.Event.IEventPublisher;
 
 import jakarta.transaction.Transactional;
 

@@ -13,8 +13,8 @@ import com.e_com.CatalogService.Category.Application.DTO.Response.CategoryRespon
 import com.e_com.CatalogService.Category.Domain.Contract.ICategoryRepository;
 import com.e_com.CatalogService.Category.Domain.Contract.ICategoryService;
 import com.e_com.CatalogService.Category.Domain.Model.Category;
+import com.e_com.CatalogService.Shared.Domain.Contract.IEventPublisher;
 import com.e_com.CatalogService.Shared.Infrastructure.Event.EventOptions;
-import com.e_com.CatalogService.Shared.Infrastructure.Event.IEventPublisher;
 
 import jakarta.transaction.Transactional;
 

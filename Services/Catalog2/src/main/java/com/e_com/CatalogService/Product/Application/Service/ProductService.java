@@ -12,21 +12,22 @@ import com.e_com.CatalogService.Product.Application.DTO.Request.CreateProductReq
 import com.e_com.CatalogService.Product.Application.DTO.Request.UpdateProductRequest;
 import com.e_com.CatalogService.Product.Application.DTO.Response.ProductResponse;
 import com.e_com.CatalogService.Product.Domain.Constants.ProductStatusEnum;
-import com.e_com.CatalogService.Product.Domain.Contract.IProductMapper;
 import com.e_com.CatalogService.Product.Domain.Contract.IProductRepository;
 import com.e_com.CatalogService.Product.Domain.Contract.IProductService;
 import com.e_com.CatalogService.Product.Domain.Model.Product;
 import com.e_com.CatalogService.Product.Infrastructure.Persistence.Entity.ProductEntity;
+import com.e_com.CatalogService.Shared.Domain.Contract.IEventPublisher;
+import com.e_com.CatalogService.Shared.Domain.Contract.IMapper;
 import com.e_com.CatalogService.Shared.Domain.Storage.IStorageService;
 import com.e_com.CatalogService.Shared.Infrastructure.Event.EventOptions;
-import com.e_com.CatalogService.Shared.Infrastructure.Event.IEventPublisher;
 
 import jakarta.transaction.Transactional;
 
 @Service
 public class ProductService implements IProductService {
     @Autowired
-    public IProductRepository ProductRepository;
+    public IProductRepository productRepository;
+
     @Autowired
     public IEventPublisher eventPublisher;
 
@@ -34,17 +35,16 @@ public class ProductService implements IProductService {
     public IStorageService storageService;
 
     @Autowired
-    public IProductMapper productMapper;
+    public IMapper<Product, ProductEntity> productMapper;
 
     public List<ProductResponse> getAllProducts() {
-        return ProductRepository.findAll().stream().map(productMapper::toDomain)
+        return productRepository.findAll().stream()
                 .map(ProductResponse::new)
                 .toList();
     }
 
     public ProductResponse getProduct(UUID ProductId) {
-        return ProductRepository.findById(ProductId)
-                .map(productMapper::toDomain)
+        return productRepository.findById(ProductId)
                 .map(ProductResponse::new)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
     }
@@ -52,53 +52,34 @@ public class ProductService implements IProductService {
     @Transactional
     public ProductResponse createProduct(CreateProductRequest request) throws IOException {
         Product product = request.toDomain();
-        product.getVariants().forEach(variant -> variant.setId(UUID.randomUUID()));
-
-        product.getVariants().forEach(variant -> {
-            var files = variant.getFiles();
-            if (files != null && !files.isEmpty()) {
-                try {
-                    storageService.uploadFiles("variant", files, "variant", variant.getId().toString());
-                } catch (RuntimeException e) {
-                    if (e.getCause() instanceof IOException) {
-                        throw new RuntimeException("Failed to upload files for variant: " + variant.getId(),
-                                e.getCause());
-                    }
-                    throw e;
-                }
-            }
-        });
 
         product.setStatus(ProductStatusEnum.PUBLISHED);
 
-        ProductEntity productEntity = ProductRepository.save(productMapper.toEntity(product));
-        Product productDomain = productMapper.toDomain(productEntity);
+        Product savedProduct = productRepository.save(product);
 
-        publishDomainEvents(productDomain, "Product.created");
+        publishDomainEvents(savedProduct, "Product.created");
 
-        return new ProductResponse(productDomain);
+        return new ProductResponse(savedProduct);
     }
 
     @Transactional
     public ProductResponse updateProduct(UUID ProductId, UpdateProductRequest request) {
-        ProductEntity productEntity = ProductRepository.findById(ProductId)
+        Product product = productRepository.findById(ProductId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        Product productDomain = productMapper.toDomain(productEntity);
-        productDomain.setName(request.getName());
-        productDomain.setDescription(request.getDescription());
+        product.setName(request.getName());
+        product.setDescription(request.getDescription());
 
-        ProductEntity savedEntity = ProductRepository.save(productMapper.toEntity(productDomain));
-        Product productUpdated = productMapper.toDomain(savedEntity);
+        Product savedProduct = productRepository.save(product);
 
-        publishDomainEvents(productUpdated, "Product.updated");
+        publishDomainEvents(savedProduct, "Product.updated");
 
-        return new ProductResponse(productUpdated);
+        return new ProductResponse(savedProduct);
     }
 
     @Transactional
     public void deleteProduct(UUID ProductId) {
-        ProductRepository.delete(ProductId);
+        productRepository.delete(ProductId);
     }
 
     @Async

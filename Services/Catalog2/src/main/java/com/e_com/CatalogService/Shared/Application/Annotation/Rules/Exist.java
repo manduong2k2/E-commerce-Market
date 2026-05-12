@@ -1,9 +1,11 @@
-package com.e_com.CatalogService.Shared.Infrastructure.Annotation.Rules;
+package com.e_com.CatalogService.Shared.Application.Annotation.Rules;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
 import java.lang.annotation.*;
+
+import com.e_com.CatalogService.Shared.Application.Annotation.Validators.ExistValidator;
 
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

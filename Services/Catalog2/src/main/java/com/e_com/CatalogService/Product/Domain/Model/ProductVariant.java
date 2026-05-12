@@ -3,8 +3,6 @@ package com.e_com.CatalogService.Product.Domain.Model;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import com.e_com.CatalogService.Shared.Domain.AggregateRoot;
 
 public class ProductVariant extends AggregateRoot<UUID> {
@@ -14,10 +12,12 @@ public class ProductVariant extends AggregateRoot<UUID> {
     private String code;
     private Money price = new Money(0);
     private List<ExtraAttribute> extraAttributes;
-    private List<MultipartFile> files;
+    private List<String> images;
     
     public ProductVariant() {
-        super(UUID.randomUUID());
+        super(null);
+        this.extraAttributes = new java.util.ArrayList<>();
+        this.images = new java.util.ArrayList<>();
     }
     
     public ProductVariant(UUID id, UUID productId, String name, String code, double price) {
@@ -89,11 +89,11 @@ public class ProductVariant extends AggregateRoot<UUID> {
         this.extraAttributes = extraAttributes;
     }
     
-    public List<MultipartFile> getFiles() {
-        return files;
+    public List<String> getImages() {
+        return images;
     }
     
-    public void setFiles(List<MultipartFile> files) {
-        this.files = files;
+    public void setImages(List<String> images) {
+        this.images = images;
     }
 }

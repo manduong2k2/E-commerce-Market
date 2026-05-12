@@ -37,7 +37,6 @@ public class CreateProductVariantRequest {
         variant.setName(name);
         variant.setPrice(price);
         variant.setExtraAttributes(extraAttributes != null ? extraAttributes.stream().map(CreateExtraAttributeRequest::toDomain).toList() : List.of());
-        variant.setFiles(files);
         return variant;
     }
 }

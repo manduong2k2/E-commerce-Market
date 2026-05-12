@@ -5,12 +5,8 @@ import java.util.UUID;
 
 import com.e_com.CatalogService.Shared.Infrastructure.Constants.UserStatus;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import java.time.LocalDateTime;
 
-@Data
-@AllArgsConstructor
 public class User {
     private UUID id;
     private String email;
@@ -32,5 +28,29 @@ public class User {
         this.password = password;
         this.status = UserStatus.DEFAULT;
         this.createdAt = createdAt;
+    }
+
+    public UUID getUserId() {
+        return id;
+    }
+    
+    public String getEmail() {
+        return email;
+    }
+    
+    public String getPassword() {
+        return password;
+    }
+    
+    public String getStatus() {
+        return status;
+    }
+    
+    public Set<String> getRoles() {
+        return roles;
+    }
+    
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 }

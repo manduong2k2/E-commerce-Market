@@ -4,18 +4,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.e_com.CatalogService.Product.Infrastructure.Persistence.Entity.ProductEntity;
+import com.e_com.CatalogService.Product.Domain.Model.Product;
+
 
 public interface IProductRepository {
-    ProductEntity save(ProductEntity Product);
+    Product save(Product Product);
 
-    List<ProductEntity> findAll();
+    List<Product> findAll();
 
-    Optional<ProductEntity> findById(UUID id);
+    Optional<Product> findById(UUID id);
 
-    List<ProductEntity> findByName(String name);
+    List<Product> findByName(String name);
 
-    ProductEntity update(ProductEntity Product);
+    Product update(Product Product);
 
     void delete(UUID id);
 }

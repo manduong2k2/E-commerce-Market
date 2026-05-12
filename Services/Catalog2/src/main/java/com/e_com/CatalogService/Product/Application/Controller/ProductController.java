@@ -21,7 +21,7 @@ import com.e_com.CatalogService.Product.Application.DTO.Request.CreateProductReq
 import com.e_com.CatalogService.Product.Application.DTO.Request.UpdateProductRequest;
 import com.e_com.CatalogService.Product.Application.DTO.Response.ProductResponse;
 import com.e_com.CatalogService.Product.Domain.Contract.IProductService;
-import com.e_com.CatalogService.Shared.Infrastructure.Annotation.Auth.Authenticated;
+import com.e_com.CatalogService.Shared.Application.Annotation.Auth.Authenticated;
 
 import jakarta.validation.Valid;
 

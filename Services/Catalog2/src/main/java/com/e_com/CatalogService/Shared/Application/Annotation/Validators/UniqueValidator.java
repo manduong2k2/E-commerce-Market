@@ -1,10 +1,12 @@
-package com.e_com.CatalogService.Shared.Infrastructure.Annotation.Rules;
+package com.e_com.CatalogService.Shared.Application.Annotation.Validators;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.stereotype.Component;
+
+import com.e_com.CatalogService.Shared.Application.Annotation.Rules.Unique;
 
 @Component
 public class UniqueValidator implements ConstraintValidator<Unique, String> {

@@ -10,7 +10,7 @@ public class ExtraAttribute extends AggregateRoot<UUID> {
     private String value;
 
     public ExtraAttribute() {
-        super(UUID.randomUUID());
+        super(null);
     }
 
     public ExtraAttribute(UUID productVariantId, String key, String value) {

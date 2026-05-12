@@ -9,7 +9,7 @@ import org.aspectj.lang.annotation.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.e_com.CatalogService.Shared.Infrastructure.Annotation.Auth.Authorized;
+import com.e_com.CatalogService.Shared.Application.Annotation.Auth.Authorized;
 
 import java.lang.reflect.Method;
 
