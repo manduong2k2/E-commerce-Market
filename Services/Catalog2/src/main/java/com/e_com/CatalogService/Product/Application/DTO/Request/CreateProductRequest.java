@@ -43,12 +43,16 @@ public class CreateProductRequest {
     private List<CreateProductVariantRequest> variants;
 
     public Product toDomain() {
-        Product product = new Product();
-        product.setName(name);
-        product.setCode(code);
-        product.setBrandId(brandId);
-        product.setDescription(description);
-        product.setVariants(variants != null ? variants.stream().map(CreateProductVariantRequest::toDomain).toList() : List.of());
+        Product product = new Product(
+            null,
+            name,
+            description,
+            code,
+            brandId,
+            null,
+            variants != null ? variants.stream().map(CreateProductVariantRequest::toDomain).toList() : List.of(),
+            categoryIds != null ? categoryIds : List.of()
+        );
         return product;
     }
 }

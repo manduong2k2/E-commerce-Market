@@ -1,9 +1,13 @@
 package com.e_com.CatalogService.Category.Infrastructure.Persistence.Entity;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.annotations.Nationalized;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
+import com.e_com.CatalogService.Product.Infrastructure.Persistence.Entity.ProductEntity;
 import com.e_com.CatalogService.Shared.Infrastructure.Persistence.JpaEntity;
 
 import jakarta.persistence.*;
@@ -32,6 +36,15 @@ public class CategoryEntity extends JpaEntity {
     @Lob
     @Nationalized
     private String description;
+
+    @ManyToMany
+    @JoinTable(
+        name = "product_category",
+        joinColumns = @JoinColumn(name = "category_id"),
+        inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<ProductEntity> products;
 
     public CategoryEntity() {}
 

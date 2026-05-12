@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import com.e_com.CatalogService.Product.Application.DTO.Request.CreateProductRequest;
-import com.e_com.CatalogService.Product.Application.DTO.Request.UpdateProductRequest;
 import com.e_com.CatalogService.Product.Application.DTO.Response.ProductResponse;
 import com.e_com.CatalogService.Product.Domain.Constants.ProductStatusEnum;
 import com.e_com.CatalogService.Product.Domain.Contract.IProductRepository;
@@ -50,9 +48,7 @@ public class ProductService implements IProductService {
     }
 
     @Transactional
-    public ProductResponse createProduct(CreateProductRequest request) throws IOException {
-        Product product = request.toDomain();
-
+    public ProductResponse createProduct(Product product) throws IOException {
         product.setStatus(ProductStatusEnum.PUBLISHED);
 
         Product savedProduct = productRepository.save(product);
@@ -63,12 +59,15 @@ public class ProductService implements IProductService {
     }
 
     @Transactional
-    public ProductResponse updateProduct(UUID ProductId, UpdateProductRequest request) {
-        Product product = productRepository.findById(ProductId)
+    public ProductResponse updateProduct(UUID productId, Product updatedProduct) {
+        Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        product.setName(request.getName());
-        product.setDescription(request.getDescription());
+        product.setName(updatedProduct.getName());
+        product.setDescription(updatedProduct.getDescription());
+        product.setCode(updatedProduct.getCode());
+        product.setBrandId(updatedProduct.getBrandId());
+        product.setCategoryIds(updatedProduct.getCategoryIds());
 
         Product savedProduct = productRepository.save(product);
 
@@ -78,15 +77,15 @@ public class ProductService implements IProductService {
     }
 
     @Transactional
-    public void deleteProduct(UUID ProductId) {
-        productRepository.delete(ProductId);
+    public void deleteProduct(UUID productId) {
+        productRepository.delete(productId);
     }
 
     @Async
-    private void publishDomainEvents(Product Product, String queue) {
-        Product.getDomainEvents()
+    private void publishDomainEvents(Product product, String queue) {
+        product.getDomainEvents()
                 .forEach(event -> eventPublisher.publish(event, new EventOptions(queue, false)));
 
-        Product.clearDomainEvents();
+        product.clearDomainEvents();
     }
 }

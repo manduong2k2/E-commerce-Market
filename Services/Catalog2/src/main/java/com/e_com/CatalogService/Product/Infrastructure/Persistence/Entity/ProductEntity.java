@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.annotations.Nationalized;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import com.e_com.CatalogService.Brand.Infrastructure.Persistence.Entity.BrandEntity;
 import com.e_com.CatalogService.Category.Infrastructure.Persistence.Entity.CategoryEntity;
@@ -37,6 +39,7 @@ public class ProductEntity extends JpaEntity {
         joinColumns = @JoinColumn(name = "product_id"),
         inverseJoinColumns = @JoinColumn(name = "category_id")
     )
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<CategoryEntity> categories;
 
     @Column(nullable = false)
@@ -48,7 +51,8 @@ public class ProductEntity extends JpaEntity {
     @Nationalized
     private String description;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<ProductVariantEntity> variants;
     
     public ProductEntity() {}

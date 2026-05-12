@@ -40,7 +40,7 @@ public class ProductController {
     @Authenticated
     @PostMapping
     public ResponseEntity<HashMap<String, Object>> create(@Valid @ModelAttribute CreateProductRequest request) throws IOException {
-        ProductResponse created = productService.createProduct(request);
+        ProductResponse created = productService.createProduct(request.toDomain());
 
         HashMap<String, Object> result = new HashMap<>();
         result.put("success", true);
@@ -62,7 +62,7 @@ public class ProductController {
     @Authenticated
     @PutMapping("/{productId}")
     public ResponseEntity<HashMap<String, Object>> update(@PathVariable UUID productId, @Valid @ModelAttribute UpdateProductRequest request) {
-        ProductResponse updated = productService.updateProduct(productId, request);
+        ProductResponse updated = productService.updateProduct(productId, request.toDomain());
         
         HashMap<String, Object> result = new HashMap<>();
         result.put("success", true);

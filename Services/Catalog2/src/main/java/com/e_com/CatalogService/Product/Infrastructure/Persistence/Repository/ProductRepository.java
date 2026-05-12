@@ -13,7 +13,6 @@ import com.e_com.CatalogService.Shared.Domain.Contract.IMapper;
 
 @Repository
 public class ProductRepository implements IProductRepository {
-
     private final ProductJpaRepository jpaRepository;
     private final IMapper<Product, ProductEntity> productMapper;
 
