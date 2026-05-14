@@ -32,8 +32,14 @@ public class ProductController {
     private IProductService productService;
 
     @GetMapping
-    public List<ProductResponse> getAll() {
-        return productService.getAllProducts();
+    public ResponseEntity<HashMap<String,Object>> getAll() {        
+        List<ProductResponse> products = productService.getAllProducts();
+
+        HashMap<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("data",  products);
+        
+        return ResponseEntity.ok().body(response);
     }
 
     @Authenticated
@@ -44,6 +50,7 @@ public class ProductController {
         HashMap<String, Object> result = new HashMap<>();
         result.put("success", true);
         result.put("data", created);
+        
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 

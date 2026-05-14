@@ -25,7 +25,7 @@ public class CategoryService implements ICategoryService {
     @Autowired
     public IEventPublisher eventPublisher; 
 
-    public List<CategoryResponse> getAllCategorys() {
+    public List<CategoryResponse> getAllCategories() {
         return CategoryRepository.findAll().stream()
                 .map(CategoryResponse::new)
                 .toList();

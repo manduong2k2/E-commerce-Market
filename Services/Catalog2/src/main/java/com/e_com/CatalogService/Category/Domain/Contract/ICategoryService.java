@@ -8,7 +8,7 @@ import com.e_com.CatalogService.Category.Application.DTO.Request.UpdateCategoryR
 import com.e_com.CatalogService.Category.Application.DTO.Response.CategoryResponse;
 
 public interface ICategoryService {
-    public List<CategoryResponse> getAllCategorys();
+    public List<CategoryResponse> getAllCategories();
 
     public CategoryResponse createCategory(CreateCategoryRequest request);
 

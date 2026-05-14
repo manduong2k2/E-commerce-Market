@@ -4,9 +4,10 @@ import java.util.List;
 import java.util.UUID;
 
 import com.e_com.CatalogService.Shared.Domain.AggregateRoot;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+@JsonPropertyOrder({"id", "name", "code", "price", "extraAttributes"})
 public class ProductVariant extends AggregateRoot<UUID> {
-    private UUID id;
     private UUID productId;
     private String name;
     private String code;

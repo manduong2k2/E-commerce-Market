@@ -1,9 +1,11 @@
 package com.e_com.CatalogService.Brand.Application.Controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -27,10 +29,15 @@ public class BrandController {
     @Autowired
     private IBrandService brandService;
 
-    @Authenticated
     @GetMapping
-    public List<BrandResponse> getAll() {
-        return brandService.getAllBrands();
+    public ResponseEntity<HashMap<String,Object>> getAll() {
+        List<BrandResponse> brands = brandService.getAllBrands();
+
+        HashMap<String,Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("data", brands);
+        
+        return ResponseEntity.ok().body(response);
     }
 
     @Authenticated

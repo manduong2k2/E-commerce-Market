@@ -13,6 +13,7 @@ public class ExtraAttributeMapper implements IMapper<ExtraAttribute, ExtraAttrib
         extraAttribute.setId(entity.getId());
         extraAttribute.setKey(entity.getKey());
         extraAttribute.setValue(entity.getValue());
+        extraAttribute.setProductVariantId(entity.getVariant().getId());
         return extraAttribute;
     }
 

@@ -17,12 +17,12 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @NoArgsConstructor
 @JsonPropertyOrder({"id", "name", "code", "brandId", "description", "variants"})
 public class ProductResponse {
-    private UUID id;
-    private String name;
-    private String code;
-    private UUID brandId;
-    private String description;
-    private List<ProductVariant> variants;
+    private UUID                    id;
+    private String                  name;
+    private String                  code;
+    private UUID                    brandId;
+    private String                  description;
+    private List<ProductVariant>    variants;
     
     public ProductResponse(Product product) {
         this.id = product.getId();

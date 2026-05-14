@@ -1,9 +1,11 @@
 package com.e_com.CatalogService.Category.Application.Controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -27,10 +29,15 @@ public class CategoryController {
     @Autowired
     private ICategoryService CategoryService;
 
-    @Authenticated
     @GetMapping
-    public List<CategoryResponse> getAll() {
-        return CategoryService.getAllCategorys();
+    public ResponseEntity<HashMap<String,Object>> getAll() {
+        List<CategoryResponse> categories = CategoryService.getAllCategories();
+
+        HashMap<String,Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("data", categories);
+
+        return ResponseEntity.ok().body(response);
     }
 
     @Authenticated

@@ -1,11 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ProductCard.css';
+import defaultProductImage from '../../../assets/product.png'
 
 function ProductCard({ product }) {
   const navigate = useNavigate();
   const { name, price, files } = product;
-  const imageUrl = files && files.length > 0 ? files[0].url : 'https://via.placeholder.com/200x200?text=Product';
+  const imageUrl = files && files.length > 0 ? files[0].url : defaultProductImage;
 
   const handleClick = () => {
     // Navigate to product detail page
@@ -20,7 +21,7 @@ function ProductCard({ product }) {
           alt={name} 
           className="product-image"
           onError={(e) => {
-            e.target.src = 'https://via.placeholder.com/200x200?text=No+Image';
+            e.target.src = defaultProductImage;
           }}
         />
       </div>

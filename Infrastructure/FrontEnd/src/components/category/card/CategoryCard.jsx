@@ -2,6 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CategoryCard.css';
+import defaultCategoryImage from '../../../assets/category.png'
 
 export default function CategoryCard({ category }) {
   const navigate = useNavigate();
@@ -15,11 +16,11 @@ export default function CategoryCard({ category }) {
     <div className="category-card user-view" onClick={handleClick}>
       <div className="category-image-container">
         <img 
-          src={category.image || 'https://via.placeholder.com/200x200?text=Category'} 
+          src={category.image || defaultCategoryImage} 
           alt={category.name}
           className="category-image"
           onError={(e) => {
-            e.target.src = 'https://via.placeholder.com/200x200?text=No+Image';
+            e.target.src = defaultCategoryImage;
           }}
         />
       </div>

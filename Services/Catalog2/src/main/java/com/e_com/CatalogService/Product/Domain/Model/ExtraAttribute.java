@@ -3,7 +3,9 @@ package com.e_com.CatalogService.Product.Domain.Model;
 import java.util.UUID;
 
 import com.e_com.CatalogService.Shared.Domain.AggregateRoot;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+@JsonPropertyOrder({"id", "key", "value", "productVariantId"})
 public class ExtraAttribute extends AggregateRoot<UUID> {
     private UUID productVariantId;
     private String key;
