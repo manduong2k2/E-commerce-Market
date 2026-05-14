@@ -31,7 +31,6 @@ public class ProductController {
     @Autowired
     private IProductService productService;
 
-    @Authenticated
     @GetMapping
     public List<ProductResponse> getAll() {
         return productService.getAllProducts();

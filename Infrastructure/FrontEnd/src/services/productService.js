@@ -42,18 +42,18 @@ export const productService = {
   // Lấy danh sách sản phẩm, có thể thêm params như page, filter
   getAll: (params = {}) => {
     const query = new URLSearchParams(params).toString();
-    return request(`/api/v1/products${query ? `?${query}` : ''}`);
+    return request(`/api/products${query ? `?${query}` : ''}`);
   },
 
   // Lấy chi tiết 1 sản phẩm
-  getById: (id) => request(`/api/v1/products/${id}`),
+  getById: (id) => request(`/api/products/${id}`),
 
   // Tạo sản phẩm mới
-  create: (data) => request('/api/v1/products', { method: 'POST', body: data }),
+  create: (data) => request('/api/products', { method: 'POST', body: data }),
 
   // Cập nhật sản phẩm
-  update: (id, data) => request(`/api/v1/products/${id}`, { method: 'PUT', body: data }),
+  update: (id, data) => request(`/api/products/${id}`, { method: 'PUT', body: data }),
 
   // Xóa sản phẩm
-  delete: (id) => request(`/api/v1/products/${id}`, { method: 'DELETE' }),
+  delete: (id) => request(`/api/products/${id}`, { method: 'DELETE' }),
 };

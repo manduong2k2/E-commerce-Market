@@ -14,14 +14,14 @@ public class ExtraAttribute extends AggregateRoot<UUID> {
     }
 
     public ExtraAttribute(UUID productVariantId, String key, String value) {
-        super(UUID.randomUUID());
+        super(null);
         this.productVariantId = productVariantId;
         this.key = key;
         this.value = value;
     }
 
     public ExtraAttribute(String key, String value) {
-        super(UUID.randomUUID());
+        super(null);
         this.key = key;
         this.value = value;
     }

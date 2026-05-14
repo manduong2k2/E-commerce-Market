@@ -15,11 +15,15 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.e_com.CatalogService.CatalogServiceApplication;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @Value("${app.debug:false}")
     private boolean debug;
 
+    private static final String BASE_PACKAGE =
+        CatalogServiceApplication.class.getPackageName();
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<?> handleAuthentication(AuthenticationException ex) {
@@ -60,6 +64,25 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
+    @ExceptionHandler(DebugBreakpointException.class)
+    public ResponseEntity<?> handleDebugBreakpoint(DebugBreakpointException ex) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ex.getDebugInfo());
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<?> handleRuntimeException(RuntimeException ex) {
+        ApiError response = new ApiError(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                ex.getMessage(),
+                ex.getClass().getName(),
+                extractStackTrace(ex));
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(response);
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ApiError> handleAll(Exception ex) {
@@ -76,6 +99,7 @@ public class GlobalExceptionHandler {
     private List<String> extractStackTrace(Exception ex) {
         return Arrays.stream(ex.getStackTrace())
                 .map(StackTraceElement::toString)
+                .filter(st -> st.startsWith(BASE_PACKAGE))
                 .toList();
     }
 }

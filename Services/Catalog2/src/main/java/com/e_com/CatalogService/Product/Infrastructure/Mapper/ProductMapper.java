@@ -21,7 +21,7 @@ public class ProductMapper implements IMapper<Product, ProductEntity> {
 
     @PersistenceContext
     private EntityManager entityManager;
-    
+
     @Override
     public Product toDomain(ProductEntity entity) {
         Product product = new Product();
@@ -32,37 +32,31 @@ public class ProductMapper implements IMapper<Product, ProductEntity> {
         product.setBrandId(entity.getBrand().getId());
         product.setStatus(new ProductStatus(entity.getStatus()));
         product.setVariants(
-            entity.getVariants() != null ? 
-            entity.getVariants().stream().map(variantMapper::toDomain).collect(java.util.stream.Collectors.toList()) : 
-            java.util.Collections.emptyList()
-        );
+                entity.getVariants() != null ? entity.getVariants().stream().map(variantMapper::toDomain)
+                        .collect(java.util.stream.Collectors.toList()) : java.util.Collections.emptyList());
         product.setCategoryIds(
-            entity.getCategories() != null ? 
-            entity.getCategories().stream().map(category -> category.getId()).collect(java.util.stream.Collectors.toList()) : 
-            java.util.Collections.emptyList()
-        );
+                entity.getCategories() != null ? entity.getCategories().stream().map(category -> category.getId())
+                        .collect(java.util.stream.Collectors.toList()) : java.util.Collections.emptyList());
         return product;
     }
-    
+
     public ProductEntity toEntity(Product domain) {
         ProductEntity entity = new ProductEntity();
+        entity.setId(domain.getId());
         entity.setName(domain.getName());
         entity.setDescription(domain.getDescription());
         entity.setBrand(entityManager.find(BrandEntity.class, domain.getBrandId()));
         entity.setCategories(
-            domain.getCategoryIds() != null ? 
-            domain.getCategoryIds().stream().map(categoryId -> entityManager.find(CategoryEntity.class, categoryId)).collect(java.util.stream.Collectors.toList()) : 
-            java.util.Collections.emptyList()
-        );
+                domain.getCategoryIds() != null ? domain.getCategoryIds().stream()
+                        .map(categoryId -> entityManager.find(CategoryEntity.class, categoryId))
+                        .collect(java.util.stream.Collectors.toList()) : java.util.Collections.emptyList());
         entity.setStatus(domain.getStatus());
         entity.setCode(domain.getCode());
         entity.setVariants(
-            domain.getVariants() != null ? 
-            domain.getVariants().stream().map(variantMapper::toEntity)
-            .peek(variant -> variant.setProduct(entity))
-            .collect(java.util.stream.Collectors.toList()) : 
-            java.util.Collections.emptyList()
-        );
+                domain.getVariants() != null ? domain.getVariants().stream().map(variantMapper::toEntity)
+                        .peek(variant -> variant.setProduct(entity))
+                        .collect(java.util.stream.Collectors.toList()) : java.util.Collections.emptyList());
+
         return entity;
     }
 }

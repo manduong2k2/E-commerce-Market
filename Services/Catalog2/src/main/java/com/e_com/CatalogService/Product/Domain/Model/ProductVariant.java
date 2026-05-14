@@ -12,12 +12,10 @@ public class ProductVariant extends AggregateRoot<UUID> {
     private String code;
     private Money price = new Money(0);
     private List<ExtraAttribute> extraAttributes;
-    private List<String> images;
     
     public ProductVariant() {
         super(null);
         this.extraAttributes = new java.util.ArrayList<>();
-        this.images = new java.util.ArrayList<>();
     }
     
     public ProductVariant(UUID id, UUID productId, String name, String code, double price) {
@@ -87,13 +85,5 @@ public class ProductVariant extends AggregateRoot<UUID> {
     
     public void setExtraAttributes(List<ExtraAttribute> extraAttributes) {
         this.extraAttributes = extraAttributes;
-    }
-    
-    public List<String> getImages() {
-        return images;
-    }
-    
-    public void setImages(List<String> images) {
-        this.images = images;
     }
 }

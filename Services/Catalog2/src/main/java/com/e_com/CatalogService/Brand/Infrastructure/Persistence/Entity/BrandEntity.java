@@ -24,9 +24,7 @@ public class BrandEntity extends JpaEntity {
     @Column(nullable = true)
     private String image;
 
-    @Column(nullable = true)
-    @Size(max = 500)
-    @Lob
+    @Column(nullable = true, length = 500)
     @Nationalized
     private String description;
 

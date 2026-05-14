@@ -32,6 +32,7 @@ public class ProductVariantMapper implements IMapper<ProductVariant, ProductVari
     @Override
     public ProductVariantEntity toEntity(ProductVariant domain) {
         ProductVariantEntity entity = new ProductVariantEntity();
+        entity.setId(domain.getId());
         entity.setCode(domain.getCode());
         entity.setName(domain.getName());
         entity.setPrice(domain.getPrice().getValue());

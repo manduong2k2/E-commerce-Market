@@ -13,12 +13,10 @@ import com.e_com.CatalogService.Shared.Infrastructure.Persistence.JpaEntity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "products")
-@Data
 @EqualsAndHashCode(callSuper = false)
 public class ProductEntity extends JpaEntity {
     @Column(nullable = false)
@@ -47,11 +45,10 @@ public class ProductEntity extends JpaEntity {
 
     @Column(nullable = true)
     @Size(max = 500)
-    @Lob
     @Nationalized
     private String description;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<ProductVariantEntity> variants;
     
@@ -62,4 +59,25 @@ public class ProductEntity extends JpaEntity {
         this.name = name;
         this.description = description;
     }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getCode() { return code; }
+    public void setCode(String code) { this.code = code; }
+
+    public BrandEntity getBrand() { return brand; }
+    public void setBrand(BrandEntity brand) { this.brand = brand; }
+
+    public List<CategoryEntity> getCategories() { return categories; }
+    public void setCategories(List<CategoryEntity> categories) { this.categories = categories; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public List<ProductVariantEntity> getVariants() { return variants; }
+    public void setVariants(List<ProductVariantEntity> variants) { this.variants = variants; }
 }

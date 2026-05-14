@@ -8,12 +8,10 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "extra_attributes")
-@Data
 @EqualsAndHashCode(callSuper = false)
 public class ExtraAttributeEntity extends JpaEntity{
     
@@ -26,4 +24,13 @@ public class ExtraAttributeEntity extends JpaEntity{
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_variant_id")
     private ProductVariantEntity variant;
+
+    public String getKey() { return key; }
+    public void setKey(String key) { this.key = key; }
+
+    public String getValue() { return value; }
+    public void setValue(String value) { this.value = value; }
+
+    public ProductVariantEntity getVariant() { return variant; }
+    public void setVariant(ProductVariantEntity variant) { this.variant = variant; }
 }

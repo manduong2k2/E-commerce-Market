@@ -17,12 +17,10 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "product_variants")
-@Data
 @EqualsAndHashCode(callSuper = false)
 public class ProductVariantEntity extends JpaEntity{
     @Column(nullable = false)
@@ -38,10 +36,25 @@ public class ProductVariantEntity extends JpaEntity{
 
     @OneToMany(mappedBy = "variant", cascade = CascadeType.ALL, orphanRemoval = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    List<ExtraAttributeEntity> extraAttributes;
+    private List<ExtraAttributeEntity> extraAttributes;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private ProductEntity product;
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getCode() { return code; }
+    public void setCode(String code) { this.code = code; }
+
+    public double getPrice() { return price; }
+    public void setPrice(double price) { this.price = price; }
+
+    public List<ExtraAttributeEntity> getExtraAttributes() { return extraAttributes; }
+    public void setExtraAttributes(List<ExtraAttributeEntity> extraAttributes) { this.extraAttributes = extraAttributes; }
+
+    public ProductEntity getProduct() { return product; }
+    public void setProduct(ProductEntity product) { this.product = product; }
 }
 

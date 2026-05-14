@@ -18,6 +18,7 @@ public class ExtraAttributeMapper implements IMapper<ExtraAttribute, ExtraAttrib
 
     public ExtraAttributeEntity toEntity(ExtraAttribute domain) {
         ExtraAttributeEntity entity = new ExtraAttributeEntity();
+        entity.setId(domain.getId());
         entity.setKey(domain.getKey());
         entity.setValue(domain.getValue());
         return entity;
