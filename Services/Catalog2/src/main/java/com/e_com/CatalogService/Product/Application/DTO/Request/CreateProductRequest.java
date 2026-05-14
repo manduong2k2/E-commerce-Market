@@ -3,8 +3,9 @@ package com.e_com.CatalogService.Product.Application.DTO.Request;
 import java.util.List;
 import java.util.UUID;
 import com.e_com.CatalogService.Product.Domain.Model.Product;
+import com.e_com.CatalogService.Product.Domain.Model.ProductStatus;
+import com.e_com.CatalogService.Shared.Application.Annotation.Rules.Distinct;
 import com.e_com.CatalogService.Shared.Application.Annotation.Rules.Exist;
-import com.e_com.CatalogService.Shared.Application.Annotation.Rules.ExistList;
 
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
@@ -35,8 +36,8 @@ public class CreateProductRequest {
     private String description;
     
     @Nullable
-    @ExistList(value = @Exist(table = "categories", column = "id", message = "Category not found"))
-    private List<UUID> categoryIds;
+    @Distinct(message = "Each category ID must be unique")
+    private List<@Exist(table = "categories", column = "id", message = "Category not found") UUID> categoryIds;
 
     @Nullable
     @Valid
@@ -49,7 +50,7 @@ public class CreateProductRequest {
             description,
             code,
             brandId,
-            null,
+            new ProductStatus(),
             variants != null ? variants.stream().map(CreateProductVariantRequest::toDomain).toList() : List.of(),
             categoryIds != null ? categoryIds : List.of()
         );

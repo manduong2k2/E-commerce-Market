@@ -7,23 +7,18 @@ import java.lang.annotation.*;
 
 import com.e_com.CatalogService.Shared.Application.Annotation.Validators.ExistValidator;
 
-@Target({ElementType.FIELD})
+@Target({ElementType.FIELD, ElementType.TYPE_USE, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = ExistValidator.class)
 @Repeatable(ExistList.class)
 public @interface Exist {
-
     String message() default "Value not exists";
-
     Class<?>[] groups() default {};
-
     Class<? extends Payload>[] payload() default {};
 
     String table();
     String column();
 
     String deletedAtColumn() default "";
-    
-    // optional: điều kiện bổ sung (ví dụ: "status = 'active' AND role_id = 1")
     String whereClause() default "";
 }

@@ -47,7 +47,8 @@ public class GatewayRegistry {
                                         .block();
 
                 } catch (Exception e) {
-                        // 2. Create service
+                        try {
+                                // 2. Create service
                         gatewayWebClient.post()
                                         .uri("/services")
                                         .bodyValue(Map.of(
@@ -66,6 +67,9 @@ public class GatewayRegistry {
                                         .retrieve()
                                         .bodyToMono(String.class)
                                         .block();
+                        } catch (Exception ex) {
+                                System.err.println("Failed to register service: " + ex.getMessage());
+                        }
                 }
         }
 }
