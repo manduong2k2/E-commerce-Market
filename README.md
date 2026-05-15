@@ -69,7 +69,7 @@ All services communicate through **Kong API Gateway**. Async inter-service event
 - **Spring Boot 4.x** — Java 24, Spring Security, Spring Data JPA, Spring AMQP, Spring WebFlux
 - **Laravel 13** — PHP 8.2, Eloquent ORM, Laravel Sanctum, Tymon JWT Auth, php-amqplib
 - **Authentication** — JWT with RSA key pair (RS256). Auth service holds the private key; all other services verify with the public key only.
-- **Architecture** — Java services follow **Domain-Driven Design (DDD)** with `Application`, `Domain`, and `Infrastructure` layers.
+- **Architecture** — Java services follow **Domain-Driven Design (DDD)** with `Application`, `Domain`, and `Infrastructure` layers for each bounded context.
 
 ### Database
 - **PostgreSQL** — each service has its own isolated database
@@ -81,12 +81,12 @@ All services communicate through **Kong API Gateway**. Async inter-service event
 - **React 19** + **Vite 7**
 - **React Router DOM 7**
 - **FontAwesome** for icons
-- All API calls routed through Kong Gateway
+- All API calls routed through Kong Gateway + Service name
 
 ### DevOps
 - **Docker Compose** — Gateway and RabbitMQ
 - **GitHub Actions** — CI/CD pipeline (deploy on push to `main`)
-- **Deploy target** — `jul2nd.myvnc.com` (Windows server via SSH)
+- **Deploy target** — `your-domain.com`
 
 ---
 
@@ -98,7 +98,7 @@ E-com/
 │   └── workflows/
 │       └── deploy.yml              # CI/CD pipeline
 ├── Infrastructure/
-│   ├── FrontEnd/                   # React SPA
+│   ├── FrontEnd/                   # React SPA - STARTED
 │   │   └── src/
 │   │       ├── routes/             # AppRouter, PrivateRoute
 │   │       ├── contexts/           # AuthContext
@@ -112,15 +112,14 @@ E-com/
 │   ├── RabbitMQ/
 │   │   └── docker-compose.yml      # RabbitMQ message broker
 │   └── StorageService/             # Spring Boot file storage
-│       └── uploads/variant/        # Uploaded product variant images
 └── Services/
-    ├── Auth/                       # Spring Boot — Authentication
-    ├── Catalog/                   # Spring Boot — Product catalog (v2, DDD)
-    ├── Vendors/                    # Spring Boot — Vendor management
-    ├── Orders/                     # Laravel — Order management
-    ├── Carts/                      # Laravel — Shopping cart
-    ├── Billings/                   # Laravel — Billing & payments
-    └── Deliveries/                 # Laravel — Delivery management
+    ├── Auth/                       # Spring Boot — Authentication - STARTED
+    ├── Catalog/                    # Spring Boot — Product catalog (v2, DDD) - STARTED
+    ├── Vendors/                    # Spring Boot — Vendor management - STARTED
+    ├── Orders/                     # Laravel — Order management - NOT STARTED
+    ├── Carts/                      # Laravel — Shopping cart - NOT STARTED
+    ├── Billings/                   # Laravel — Billing & payments - NOT STARTED
+    └── Deliveries/                 # Laravel — Delivery management - NOT STARTED
 ```
 
 ### DDD Layer Structure (Java services)
@@ -195,8 +194,8 @@ cd Services/Auth
 cd Infrastructure/StorageService
 ./mvnw spring-boot:run
 
-# Catalog v2
-cd Services/Catalog2
+# Catalog
+cd Services/Catalog
 ./mvnw spring-boot:run
 
 # Vendor Service
@@ -241,9 +240,9 @@ VITE_CATALOG_SERVICE_NAME=catalog-service
 
 Each service requires:
 - `spring.datasource.url` — PostgreSQL connection
-- `jwt.public-key` — RSA public key for JWT verification
-- `spring.rabbitmq.*` — RabbitMQ connection
-- `spring.mail.*` — SMTP (Gmail) for email notifications
+- `jwt.public-key`        — RSA public key for JWT verification
+- `spring.rabbitmq.*`     — RabbitMQ connection
+- `spring.mail.*`         — SMTP (Gmail) for email notifications
 
 ### Auth Service additionally requires:
 - `jwt.private-key` — RSA private key for signing tokens
@@ -252,13 +251,13 @@ Each service requires:
 
 ## Production URLs
 
-| Service | URL |
-|---|---|
-| Gateway | `https://gateway.your-domain.com` |
-| Auth | `https://auth.your-domain.com` |
-| Catalog | `https://catalog.your-domain.com` |
-| Storage | `https://storage.your-domain.com` |
-| Vendors | `https://vendors.your-domain.com` |
+| Service    |                 URL                  |
+|------------|--------------------------------------|
+| Gateway    | `https://gateway.your-domain.com`    |
+| Auth       | `https://auth.your-domain.com`       |
+| Catalog    | `https://catalog.your-domain.com`    |
+| Storage    | `https://storage.your-domain.com`    |
+| Vendors    | `https://vendors.your-domain.com`    |
 | Deliveries | `https://deliveries.your-domain.com` |
 
 ---
@@ -276,8 +275,6 @@ GitHub Actions deploys automatically on push to `main`:
 ---
 
 ## Notes
-
-- **Catalog has two versions**: `Catalog` (Laravel, v1) and `Catalog2` (Spring Boot + DDD, v2 — actively replacing v1)
 - **JWT uses RSA key pair**: Only the Auth service holds the private key. All other services verify tokens using the shared public key.
 - **Orders are event-driven**: The Orders API does not expose a `store` or `update` endpoint — orders are created via RabbitMQ events from Cart/Billing services.
 - **All API traffic goes through Kong**: Frontend calls `{GATEWAY_URL}/{service-name}/api/...` for every request.
