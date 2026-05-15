@@ -1,0 +1,28 @@
+{"properties": [
+  {
+    "name": "spring.application.base-url",
+    "type": "java.lang.String",
+    "description": "Base API URL to access this service"
+  },
+  {
+    "name": "spring.application.auth-domain",
+    "type": "java.lang.String",
+    "description": "Domain for authentication, authorization and CORS configuration"
+  },
+  {
+    "name": "spring.application.gateway-url",
+    "type": "java.lang.String",
+    "description": "API gateway URL for regular HTTP calls"
+  },
+  {
+    "name": "spring.application.gateway-admin-url",
+    "type": "java.lang.String",
+    "description": "API gateway URL for services registry and configurations in the whole system"
+  },
+  {
+    "name": "jwt.public-key",
+    "type": "java.lang.String",
+    "description": "Public RSA(RS256) for JWT token verification, this key will be generated from private key of Auth service"
+  }
+]}
+

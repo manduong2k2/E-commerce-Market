@@ -6,7 +6,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
 import com.e_com.CatalogService.Shared.Application.Annotation.Auth.Authenticated;
-import com.e_com.CatalogService.Shared.Infrastructure.Constants.ErrorMessage;
+import com.e_com.CatalogService.Shared.Domain.Constants.ErrorMessage;
 import com.e_com.CatalogService.Shared.Infrastructure.Constants.Http;
 
 import jakarta.servlet.http.Cookie;

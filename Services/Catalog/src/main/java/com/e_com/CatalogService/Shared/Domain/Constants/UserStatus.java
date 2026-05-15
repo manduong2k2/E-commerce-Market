@@ -1,4 +1,4 @@
-package com.e_com.CatalogService.Shared.Infrastructure.Constants;
+package com.e_com.CatalogService.Shared.Domain.Constants;
 
 public final class UserStatus {
     public static final String DEFAULT = "INACTIVE";

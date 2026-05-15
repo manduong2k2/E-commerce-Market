@@ -24,7 +24,7 @@ public class ContextHolder {
             return null;
         }
 
-        return new User(UUID.fromString(userId), userId, userId, null);
+        return new User(UUID.fromString(userId));
     }
 
     public static void clear() {
