@@ -9,7 +9,7 @@ import org.aspectj.lang.annotation.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.e_com.VendorService.Shared.Infrastructure.Annotation.Auth.Authorized;
+import com.e_com.VendorService.Shared.Application.Annotation.Auth.Authorized;
 
 import java.lang.reflect.Method;
 
@@ -17,7 +17,6 @@ import java.lang.reflect.Method;
 @Component
 @RequiredArgsConstructor
 public class AuthorizedAspect {
-
     private final ApplicationContext applicationContext;
     private final HttpServletRequest request;
 

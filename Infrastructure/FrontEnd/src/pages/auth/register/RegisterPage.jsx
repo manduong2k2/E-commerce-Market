@@ -100,8 +100,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="register-container">
-      <form onSubmit={handleSubmit} className="register-form">
+    <form onSubmit={handleSubmit} className="register-form">
         <h2>Create Account</h2>
 
         <div className="form-group">
@@ -186,6 +185,5 @@ export default function RegisterPage() {
           Already have an account? <Link to="/login">Login now</Link>
         </div>
       </form>
-    </div>
   );
 }

@@ -10,10 +10,8 @@ public class WebClientConfig {
     @Value("${spring.application.gateway-admin-url}")
     private String gatewayAdminUrl;
 
-    @Bean("gatewayWebClient")
-    public WebClient gatewayWebClient() {
-        return WebClient.builder()
-                .baseUrl(gatewayAdminUrl)
-                .build();
+    @Bean
+    public WebClient.Builder webClientBuilder() {
+        return WebClient.builder();
     }
 }

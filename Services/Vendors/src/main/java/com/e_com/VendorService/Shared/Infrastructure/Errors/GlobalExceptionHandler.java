@@ -15,11 +15,16 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.e_com.VendorService.VendorServiceApplication;
+import com.e_com.VendorService.Shared.Application.Errors.ApiError;
+import com.e_com.VendorService.Shared.Application.Errors.ValidationError;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @Value("${app.debug:false}")
     private boolean debug;
 
+    private static final String BASE_PACKAGE = VendorServiceApplication.class.getPackageName();
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<?> handleAuthentication(AuthenticationException ex) {
@@ -43,7 +48,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidation(MethodArgumentNotValidException ex) {
-
         Map<String, String> errors = new HashMap<>();
 
         ex.getBindingResult().getFieldErrors().forEach(err -> {
@@ -57,6 +61,25 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(HttpStatus.UNPROCESSABLE_CONTENT)
+                .body(response);
+    }
+
+    @ExceptionHandler(DebugBreakpointException.class)
+    public ResponseEntity<?> handleDebugBreakpoint(DebugBreakpointException ex) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ex.getDebugInfo());
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<?> handleRuntimeException(RuntimeException ex) {
+        ApiError response = new ApiError(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                ex.getMessage(),
+                ex.getClass().getName(),
+                extractStackTrace(ex));
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(response);
     }
 
@@ -76,6 +99,7 @@ public class GlobalExceptionHandler {
     private List<String> extractStackTrace(Exception ex) {
         return Arrays.stream(ex.getStackTrace())
                 .map(StackTraceElement::toString)
+                .filter(st -> st.startsWith(BASE_PACKAGE))
                 .toList();
     }
 }

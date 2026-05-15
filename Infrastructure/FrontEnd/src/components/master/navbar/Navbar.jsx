@@ -50,7 +50,7 @@ export default function Navbar({ onToggleSidebar, sidebarExpanded }) {
           ☰
         </button> : null}
         <Link to="/home" className="navbar-logo" >
-          MyApp
+          TnCart
         </Link>
       </div>
 
@@ -66,7 +66,7 @@ export default function Navbar({ onToggleSidebar, sidebarExpanded }) {
                   <button className="dropdown-item" onClick={() => handleMenuClick('/profile')}>
                     <i className="fas fa-user"></i> Profile
                   </button>
-                  <button className="dropdown-item" onClick={() => handleMenuClick('/vendor-management')}>
+                  <button className="dropdown-item" onClick={() => handleMenuClick('/my-vendor')}>
                     <i className="fas fa-store"></i> Vendor Management
                   </button>
                   <button className="dropdown-item" onClick={() => handleMenuClick('/order-history')}>

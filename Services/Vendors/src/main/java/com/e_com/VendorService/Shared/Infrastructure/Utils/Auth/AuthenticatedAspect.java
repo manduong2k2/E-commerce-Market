@@ -5,8 +5,9 @@ import org.aspectj.lang.annotation.*;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
-import com.e_com.VendorService.Shared.Infrastructure.Annotation.Auth.Authenticated;
-import com.e_com.VendorService.Shared.Infrastructure.Constants.ErrorMessage;
+import com.e_com.VendorService.Shared.Application.Annotation.Auth.Authenticated;
+import com.e_com.VendorService.Shared.Application.Auth.ContextHolder;
+import com.e_com.VendorService.Shared.Domain.Constants.ErrorMessage;
 import com.e_com.VendorService.Shared.Infrastructure.Constants.Http;
 
 import jakarta.servlet.http.Cookie;
@@ -15,7 +16,6 @@ import jakarta.servlet.http.HttpServletRequest;
 @Component
 @Aspect
 public class AuthenticatedAspect {
-
     private final HttpServletRequest request;
 
     private final JwtService jwtService;

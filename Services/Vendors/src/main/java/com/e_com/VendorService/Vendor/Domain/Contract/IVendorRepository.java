@@ -14,4 +14,6 @@ public interface IVendorRepository {
     Optional<Vendor> findById(UUID id);
 
     Optional<Vendor> findByUserId(UUID userId);
+
+    boolean existsByUserId(UUID userId);
 }

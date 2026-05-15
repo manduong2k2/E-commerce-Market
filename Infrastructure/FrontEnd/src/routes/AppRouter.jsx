@@ -9,6 +9,10 @@ import LoginPage from '../pages/auth/login/LoginPage';
 import RegisterPage from '../pages/auth/register/RegisterPage';
 import ForgotPasswordPage from '../pages/auth/forgot/ForgotPasswordPage';
 import HomePage from '../pages/home/HomePage';
+import OnboardingPage from '../pages/onboarding/OnboardingPage';
+import VendorCreatePage from '../pages/vendor/create/VendorCreatePage';
+import MyVendorPage from '../pages/vendor/my/MyVendorPage';
+import VendorDetailPage from '../pages/vendor/detail/VendorDetailPage';
 
 import { AuthContext } from '../contexts/AuthContext';
 import '../index.css';
@@ -38,14 +42,19 @@ export default function AppRouter() {
           <Route path="/forgot" element={<ForgotPasswordPage />} />
         </Route>
 
+        {/* Onboarding — standalone, no layout wrapper */}
+        <Route path="/onboarding" element={<OnboardingPage />} />
+
         {/* Route for all users */}
         <Route element={<PublicRoute><MasterLayout /></PublicRoute>}>
           <Route path="/home" element={<HomePage />} />
+          <Route path="/vendor/:id" element={<VendorDetailPage />} />
         </Route>
 
         {/* Private pages */}
         <Route element={<PrivateRoute><MasterLayout /></PrivateRoute>}>
-          {/* Routes for only authenticated users */}
+          <Route path="/vendor-create" element={<VendorCreatePage />} />
+          <Route path="/my-vendor" element={<MyVendorPage />} />
           {/* <Route path="/profile" element={<ProfilePage />} /> */}
           {/* <Route path="/orders" element={<OrdersPage />} /> */}
         </Route>

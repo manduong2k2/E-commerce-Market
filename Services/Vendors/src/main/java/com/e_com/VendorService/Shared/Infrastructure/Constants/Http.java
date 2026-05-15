@@ -1,7 +1,6 @@
 package com.e_com.VendorService.Shared.Infrastructure.Constants;
 
 public final class Http {
-
     private Http() {
     }
 

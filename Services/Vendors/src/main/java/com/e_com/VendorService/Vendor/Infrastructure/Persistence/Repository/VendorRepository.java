@@ -1,6 +1,7 @@
 package com.e_com.VendorService.Vendor.Infrastructure.Persistence.Repository;
 
 import com.e_com.VendorService.Vendor.Domain.Model.Vendor;
+import com.e_com.VendorService.Shared.Domain.Contract.IMapper;
 import com.e_com.VendorService.Vendor.Domain.Contract.IVendorRepository;
 import com.e_com.VendorService.Vendor.Infrastructure.Persistence.Entity.VendorEntity;
 import org.springframework.stereotype.Repository;
@@ -14,53 +15,42 @@ public class VendorRepository implements IVendorRepository {
 
     private final VendorJpaRepository jpaRepository;
 
-    public VendorRepository(VendorJpaRepository jpaRepository) {
+    private IMapper<Vendor, VendorEntity> vendorMapper;
+
+    public VendorRepository(VendorJpaRepository jpaRepository, IMapper<Vendor, VendorEntity> vendorMapper) {
         this.jpaRepository = jpaRepository;
+        this.vendorMapper = vendorMapper;
     }
 
     @Override
     public List<Vendor> findAll() {
         return jpaRepository.findAll().stream()
-                .map(this::toDomain)
+                .map(vendorMapper::toDomain)
                 .toList();
     }
 
     @Override
     public Vendor save(Vendor vendor) {
-        VendorEntity entity = toEntity(vendor);
+        VendorEntity entity = vendorMapper.toEntity(vendor);
         VendorEntity saved = jpaRepository.save(entity);
-        return toDomain(saved);
+        return vendorMapper.toDomain(saved);
     }
 
     @Override
     public Optional<Vendor> findById(UUID id) {
         return jpaRepository.findById(id)
-                .map(this::toDomain);
+                .map(vendorMapper::toDomain);
     }
 
     @Override
     public Optional<Vendor> findByUserId(UUID userId) {
         return jpaRepository.findByUserId(userId)
-                .map(this::toDomain);
+                .map(vendorMapper::toDomain);
     }
 
-    // ===== mapping =====
-
-    private Vendor toDomain(VendorEntity entity) {
-        return new Vendor(
-                entity.getId(),
-                entity.getUserId(),
-                entity.getName(),
-                entity.getStatus()
-        );
-    }
-
-    private VendorEntity toEntity(Vendor vendor) {
-        return new VendorEntity(
-                vendor.getId(),
-                vendor.getUserId(),
-                vendor.getName(),
-                vendor.getStatus()
-        );
+    @Override
+    public boolean existsByUserId(UUID userId) {
+        return jpaRepository.findByUserId(userId).isEmpty()
+            ? false : true;
     }
 }

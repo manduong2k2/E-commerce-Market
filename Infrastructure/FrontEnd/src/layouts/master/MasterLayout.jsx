@@ -58,7 +58,7 @@ export default function MasterLayout() {
         <Sidebar expanded={sidebarExpanded} />
         <main
           className="layout-main"
-          style={{ marginLeft: sidebarExpanded ? 200 : 60 }}
+          style={{ marginLeft: sidebarExpanded ? 200 : 0 }}
         >
           <Outlet />
         </main>

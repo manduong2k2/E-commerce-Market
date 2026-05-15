@@ -12,7 +12,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.e_com.VendorService.Shared.Infrastructure.Constants.ErrorMessage;
+import com.e_com.VendorService.Shared.Domain.Constants.ErrorMessage;
 
 import org.springframework.security.core.AuthenticationException;
 import io.jsonwebtoken.Claims;
@@ -29,12 +29,6 @@ public class JwtService {
         @Value("${jwt.public-key}") Resource publicKeyResource) {
         this.publicKey = loadPublicKey(publicKeyResource);
     }
-
-    @Value("${jwt.expiration}")
-    private long expiration;
-
-    @Value("${jwt.refresh-token-expiration}")
-    private long refreshTokenExpiration;
 
     private PublicKey loadPublicKey(Resource resource) {
         try (InputStream is = resource.getInputStream()) {

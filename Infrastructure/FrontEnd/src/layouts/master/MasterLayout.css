@@ -8,11 +8,11 @@
 .layout-body {
   display: flex;
   flex: 1;
-  padding-top: 80px;
+  padding-top: 60px;
 }
 
 .layout-main {
   flex: 1;
-  padding: 20px;
+  padding: 0px 20px;
   transition: margin-left 0.3s ease;
 }

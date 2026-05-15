@@ -16,8 +16,7 @@
 /* card login/register */
 .auth-layout-card {
   width: 100%;
-  max-width: 420px;
-  padding: 30px;
+  max-width: 480px;
+  padding: 0;
   border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 }
