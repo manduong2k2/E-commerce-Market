@@ -18,14 +18,14 @@ A full-stack e-commerce platform built with a **microservices architecture**, co
                         └────────┬────────┘
               ┌──────────────────┼──────────────────┐
               │                  │                  │
-    ┌────────────────┐  ┌────────────────┐  ┌─────────────────┐
-    │  Auth Service  │  │ Catalog Service│  │ Vendor Service  │
-    │ (Spring Boot)  │  │ (Spring Boot)  │  │ (Spring Boot)   │
-    └────────────────┘  └────────────────┘  └─────────────────┘
-              │                  │                   │
+    ┌────────────────┐  ┌────────────────┐  ┌────────────────────┐
+    │  Auth Service  │  │ Catalog Service│  │    Vendor Service  │
+    │ (Spring Boot)  │  │ (Spring Boot)  │  │    (Spring Boot)   │
+    └────────────────┘  └────────────────┘  └────────────────────┘
+              │                  │                     │
     ┌────────────────┐  ┌────────────────┐  ┌────────────────────┐
     │  Cart Service  │  │ Order Service  │  │ Deliveries Service │
-    │   (Laravel)    │  │   (Laravel)    │  │ (Spring Boot)      │
+    │   (Laravel)    │  │   (Laravel)    │  │    (Spring Boot)   │
     └────────────────┘  └────────────────┘  └────────────────────┘
                                  │
                         ┌────────▼────────┐
@@ -42,24 +42,24 @@ All services communicate through **Kong API Gateway**. Async inter-service event
 
 ### Backend Services (`Services/`)
 
-| Service | Tech | Port | Database | Description |
-|---|---|---|---|---|
-| **Auth** | Spring Boot 4.0.5 / Java 24 | default | `auth_services` | Authentication, JWT, email verification |
-| **Catalog** | Spring Boot 4.1.0 / Java 24 | 8083 | `catalog_services` | Products, categories, brands (v2 - DDD) |
-| **Vendors** | Spring Boot 4.1.0 / Java 24 | 8082 | `vendor_service` | Vendor/seller management |
-| **Orders** | Laravel 13 / PHP 8.2 | artisan | `order_services` | Order management |
-| **Carts** | Laravel 13 / PHP 8.2 | artisan | `cart_services` | Shopping cart |
-| **Billings** | Laravel 13 / PHP 8.2 | artisan | `billing_services` | Payments & invoices |
-| **Deliveries** | Laravel 13 / PHP 8.2 | artisan | `delivery_services` | Delivery management |
+|     Service    |             Tech            |   Port  |       Database      |             Description                 |
+|----------------|-----------------------------|---------|---------------------|-----------------------------------------|
+| **Auth**       | Spring Boot 4.0.5 / Java 24 | default | `auth_services`     | Authentication, JWT, email verification |
+| **Catalog**    | Spring Boot 4.1.0 / Java 24 | 8083    | `catalog_services`  | Products, categories, brands (v2 - DDD) |
+| **Vendors**    | Spring Boot 4.1.0 / Java 24 | 8082    | `vendor_service`    | Vendor/seller management                |
+| **Orders**     | Laravel 13 / PHP 8.2        | artisan | `order_services`    | Order management                        |
+| **Carts**      | Laravel 13 / PHP 8.2        | artisan | `cart_services`     | Shopping cart                           |
+| **Billings**   | Laravel 13 / PHP 8.2        | artisan | `billing_services`  | Payments & invoices                     |
+| **Deliveries** | Laravel 13 / PHP 8.2        | artisan | `delivery_services` | Delivery management                     |
 
 ### Infrastructure (`Infrastructure/`)
 
-| Component | Tech | Port | Description |
-|---|---|---|---|
-| **Gateway** | Kong 3.6 | 8000 (proxy), 8001 (admin) | API Gateway with PostgreSQL config store |
-| **RabbitMQ** | RabbitMQ 4.2.4 | 5673 (AMQP), 15673 (UI) | Message broker for async events |
-| **StorageService** | Spring Boot 4.1.0 / Java 24 | 8081 | File/image upload and serving |
-| **FrontEnd** | React 19 + Vite 7 | 5173 (dev) | Single-page application |
+|      Component     |             Tech               |            Port            |               Description                |
+|--------------------|--------------------------------|----------------------------|------------------------------------------|
+| **Gateway**        | Kong 3.6                       | 8000 (proxy), 8001 (admin) | API Gateway with PostgreSQL config store |
+| **RabbitMQ**       | RabbitMQ 4.2.4                 | 5673 (AMQP), 15673 (UI)    | Message broker for async events          |
+| **StorageService** | Spring Boot 4.1.0 / Java 24    | 8081                       | File/image upload and serving            |
+| **FrontEnd**       | React 19 + Vite 7 | 5173 (dev) | Single-page application    |                                          |
 
 ---
 
