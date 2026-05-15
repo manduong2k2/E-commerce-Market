@@ -232,7 +232,7 @@ npm run build     # production build
 ### Frontend (`Infrastructure/FrontEnd/.env`)
 
 ```env
-VITE_GATEWAY_URL=https://gateway.jul2nd.myvnc.com
+VITE_GATEWAY_URL=https://gateway.your-domain.com
 VITE_AUTH_SERVICE_NAME=auth-service
 VITE_CATALOG_SERVICE_NAME=catalog-service
 ```
