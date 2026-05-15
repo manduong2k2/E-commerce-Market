@@ -8,7 +8,6 @@ import com.e_com.CatalogService.Shared.Domain.Contract.IEventPublisher;
 
 @Component
 public class RabbitMQEventPublisher implements IEventPublisher {
-    
     private final RabbitTemplate rabbitTemplate;
 
     public RabbitMQEventPublisher(RabbitTemplate rabbitTemplate) {

@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DebugBreakpointException extends RuntimeException {
-    
     private final Map<String, Object> debugInfo;
 
     public DebugBreakpointException(String message, Object obj) {

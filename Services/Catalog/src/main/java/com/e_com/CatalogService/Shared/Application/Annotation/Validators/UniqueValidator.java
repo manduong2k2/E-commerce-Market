@@ -10,7 +10,6 @@ import com.e_com.CatalogService.Shared.Application.Annotation.Rules.Unique;
 
 @Component
 public class UniqueValidator implements ConstraintValidator<Unique, String> {
-
     @PersistenceContext
     private EntityManager em;
 

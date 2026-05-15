@@ -17,7 +17,6 @@ import java.lang.reflect.Method;
 @Component
 @RequiredArgsConstructor
 public class AuthorizedAspect {
-
     private final ApplicationContext applicationContext;
     private final HttpServletRequest request;
 

@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 
 public class DistinctValidator implements ConstraintValidator<Distinct, List<?>> {
-
     @Override
     public boolean isValid(List<?> value, ConstraintValidatorContext context) {
         if (value == null || value.isEmpty()) {

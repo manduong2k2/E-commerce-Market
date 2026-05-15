@@ -16,7 +16,6 @@ import jakarta.servlet.http.HttpServletRequest;
 @Component
 @Aspect
 public class AuthenticatedAspect {
-
     private final HttpServletRequest request;
 
     private final JwtService jwtService;

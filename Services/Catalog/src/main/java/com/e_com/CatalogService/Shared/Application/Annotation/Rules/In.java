@@ -11,7 +11,6 @@ import com.e_com.CatalogService.Shared.Application.Annotation.Validators.InValid
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = InValidator.class)
 public @interface In {
-
     String message() default "Value is not in allowed list";
 
     Class<?>[] groups() default {};

@@ -10,7 +10,6 @@ import com.e_com.CatalogService.Shared.Application.Annotation.Rules.Exist;
 
 @Component
 public class ExistValidator implements ConstraintValidator<Exist, Object> {
-
     @PersistenceContext
     private EntityManager em;
 

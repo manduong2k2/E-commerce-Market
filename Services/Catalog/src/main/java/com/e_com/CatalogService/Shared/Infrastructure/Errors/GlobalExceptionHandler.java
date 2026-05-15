@@ -24,8 +24,7 @@ public class GlobalExceptionHandler {
     @Value("${app.debug:false}")
     private boolean debug;
 
-    private static final String BASE_PACKAGE =
-        CatalogServiceApplication.class.getPackageName();
+    private static final String BASE_PACKAGE = CatalogServiceApplication.class.getPackageName();
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<?> handleAuthentication(AuthenticationException ex) {
@@ -49,7 +48,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidation(MethodArgumentNotValidException ex) {
-
         Map<String, String> errors = new HashMap<>();
 
         ex.getBindingResult().getFieldErrors().forEach(err -> {

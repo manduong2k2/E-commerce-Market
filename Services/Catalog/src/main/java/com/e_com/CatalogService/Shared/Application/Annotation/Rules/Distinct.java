@@ -11,7 +11,6 @@ import com.e_com.CatalogService.Shared.Application.Annotation.Validators.Distinc
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = DistinctValidator.class)
 public @interface Distinct {
-
     String message() default "List contains duplicated values";
 
     Class<?>[] groups() default {};

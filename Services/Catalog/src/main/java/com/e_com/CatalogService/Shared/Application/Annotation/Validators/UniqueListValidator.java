@@ -12,7 +12,6 @@ import java.util.List;
 
 @Component
 public class UniqueListValidator implements ConstraintValidator<UniqueList, List<?>> {
-
     @Autowired
     private UniqueValidator uniqueValidator;
 

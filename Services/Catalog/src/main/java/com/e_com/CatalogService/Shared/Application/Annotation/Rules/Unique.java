@@ -12,7 +12,6 @@ import com.e_com.CatalogService.Shared.Application.Annotation.Validators.UniqueV
 @Constraint(validatedBy = UniqueValidator.class)
 @Repeatable(UniqueList.class)
 public @interface Unique {
-
     String message() default "Value already exists";
 
     Class<?>[] groups() default {};
