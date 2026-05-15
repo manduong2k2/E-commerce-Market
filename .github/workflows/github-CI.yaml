@@ -1,0 +1,19 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Deploy
+        shell: powershell
+        run: |
+          Set-Location "${{ vars.PROJECT_PATH }}"
+
+          git fetch origin
+          git reset --hard origin/${{ vars.BRANCH_NAME }}
