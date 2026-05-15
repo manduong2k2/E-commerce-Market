@@ -1,4 +1,4 @@
-package com.e_com.CatalogService.Shared.Infrastructure.Errors;
+package com.e_com.CatalogService.Shared.Application.Errors;
 
 import java.util.List;
 

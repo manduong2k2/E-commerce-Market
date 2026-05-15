@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.e_com.CatalogService.CatalogServiceApplication;
+import com.e_com.CatalogService.Shared.Application.Errors.ApiError;
+import com.e_com.CatalogService.Shared.Application.Errors.ValidationError;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
