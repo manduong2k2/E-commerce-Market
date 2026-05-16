@@ -9,16 +9,15 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.Date;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.core.io.Resource;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.e_com.Auth.Domain.Constants.ErrorMessage;
 import com.e_com.Auth.Domain.Model.User;
-import com.e_com.Auth.Infrastructure.Persistence.Repository.IUserRepository;
 
 import org.springframework.security.core.AuthenticationException;
 import io.jsonwebtoken.Claims;
@@ -29,16 +28,19 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 @Service
 public class JwtService {
+    private static final String BLACKLIST_PREFIX = "jwt:blacklist:";
+
     private final PrivateKey privateKey;
     private final PublicKey publicKey;
-    private final ConcurrentHashMap<String, Long> blacklist = new ConcurrentHashMap<>();
+    private final StringRedisTemplate redisTemplate;
 
     public JwtService(
             @Value("${jwt.private-key}") Resource privateKeyResource,
             @Value("${jwt.public-key}") Resource publicKeyResource,
-            IUserRepository userRepo) {
+            StringRedisTemplate redisTemplate) {
         this.privateKey = loadPrivateKey(privateKeyResource);
         this.publicKey = loadPublicKey(publicKeyResource);
+        this.redisTemplate = redisTemplate;
     }
 
     @Value("${jwt.expiration}")
@@ -105,8 +107,9 @@ public class JwtService {
                     .setSigningKey(publicKey)
                     .build()
                     .parseClaimsJws(token);
-            
-            if(blacklist.containsKey(claims.getBody().getId())) {
+
+            String jti = claims.getBody().getId();
+            if (Boolean.TRUE.equals(redisTemplate.hasKey(BLACKLIST_PREFIX + jti))) {
                 throw new AuthenticationException(ErrorMessage.TOKEN_BLACKLISTED) {
                 };
             }
@@ -120,10 +123,14 @@ public class JwtService {
     public void invalidateToken(String token) {
         Claims claims = verifyToken(token);
         String jti = claims.getId();
-        Date exp = claims.getExpiration();
+        long ttl = claims.getExpiration().getTime() - System.currentTimeMillis();
 
-        long ttl = exp.getTime() - System.currentTimeMillis();
-
-        blacklist.put(jti, System.currentTimeMillis() + ttl);
+        if (ttl > 0) {
+            redisTemplate.opsForValue().set(
+                    BLACKLIST_PREFIX + jti,
+                    "1",
+                    ttl,
+                    TimeUnit.MILLISECONDS);
+        }
     }
 }
