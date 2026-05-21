@@ -5,10 +5,10 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
-import java.util.Date;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.core.io.Resource;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.types.Expiration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -22,12 +22,16 @@ import io.jsonwebtoken.Jwts;
 
 @Service
 public class JwtService {
+    private static final String BLACKLIST_PREFIX = "jwt:blacklist:";
+
     private final PublicKey publicKey;
-    private final ConcurrentHashMap<String, Long> blacklist = new ConcurrentHashMap<>();
+    private final StringRedisTemplate redisTemplate;
 
     public JwtService(
-        @Value("${jwt.public-key}") Resource publicKeyResource) {
+            @Value("${jwt.public-key}") Resource publicKeyResource,
+            StringRedisTemplate redisTemplate) {
         this.publicKey = loadPublicKey(publicKeyResource);
+        this.redisTemplate = redisTemplate;
     }
 
     private PublicKey loadPublicKey(Resource resource) {
@@ -50,8 +54,9 @@ public class JwtService {
                     .setSigningKey(publicKey)
                     .build()
                     .parseClaimsJws(token);
-            
-            if(blacklist.containsKey(claims.getBody().getId())) {
+
+            String jti = claims.getBody().getId();
+            if (Boolean.TRUE.equals(redisTemplate.hasKey(BLACKLIST_PREFIX + jti))) {
                 throw new AuthenticationException(ErrorMessage.TOKEN_BLACKLISTED) {
                 };
             }
@@ -65,10 +70,13 @@ public class JwtService {
     public void invalidateToken(String token) {
         Claims claims = verifyToken(token);
         String jti = claims.getId();
-        Date exp = claims.getExpiration();
-
-        long ttl = exp.getTime() - System.currentTimeMillis();
-
-        blacklist.put(jti, System.currentTimeMillis() + ttl);
+        long ttl = claims.getExpiration().getTime() - System.currentTimeMillis();
+        if (ttl > 0) {
+            redisTemplate.opsForValue().set(
+                    BLACKLIST_PREFIX + jti,
+                    "1",
+                    Expiration.milliseconds(ttl)
+                );
+        }
     }
 }

@@ -1,7 +1,5 @@
 package com.e_com.VendorService.Vendor.Application.DTO.Request;
 
-import java.util.UUID;
-
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.annotation.Nullable;
