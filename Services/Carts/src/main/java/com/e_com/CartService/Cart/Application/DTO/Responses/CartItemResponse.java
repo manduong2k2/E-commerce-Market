@@ -2,7 +2,7 @@ package com.e_com.CartService.Cart.Application.DTO.Responses;
 
 import java.util.UUID;
 
-import com.e_com.CartService.Cart.Domain.Model.CartItem;
+import com.e_com.CartService.Cart.Domain.Models.CartItem;
 
 import lombok.Data;
 

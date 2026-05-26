@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.e_com.OrderService.Order.Domain.Model.Order;
+import com.e_com.OrderService.Order.Domain.Models.Order;
 
 public interface IOrderRepository {
     List<Order> findAll();

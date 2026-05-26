@@ -6,6 +6,5 @@ import lombok.Data;
 
 @Data
 public class CheckoutCartCommand {
-    private UUID cartId;
     private UUID userId;
 }

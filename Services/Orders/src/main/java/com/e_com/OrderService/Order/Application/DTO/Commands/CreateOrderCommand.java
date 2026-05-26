@@ -3,7 +3,7 @@ package com.e_com.OrderService.Order.Application.DTO.Commands;
 import java.util.List;
 import java.util.UUID;
 
-import com.e_com.OrderService.Order.Domain.Model.OrderItem;
+import com.e_com.OrderService.Order.Domain.Models.OrderItem;
 
 import lombok.Data;
 

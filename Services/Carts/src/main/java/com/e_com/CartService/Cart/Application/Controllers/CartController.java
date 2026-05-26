@@ -1,5 +1,7 @@
 package com.e_com.CartService.Cart.Application.Controllers;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.e_com.CartService.Cart.Application.DTO.Commands.AddItemToCartCommand;
 import com.e_com.CartService.Cart.Application.DTO.Commands.CheckoutCartCommand;
-import com.e_com.CartService.Cart.Application.DTO.Commands.CreateCartCommand;
 import com.e_com.CartService.Cart.Application.DTO.Commands.RemoveItemFromCartCommand;
 import com.e_com.CartService.Cart.Application.DTO.Commands.UpdateCartItemCommand;
 import com.e_com.CartService.Cart.Application.DTO.Requests.AddItemRequest;
 import com.e_com.CartService.Cart.Application.DTO.Requests.UpdateItemRequest;
 import com.e_com.CartService.Cart.Application.DTO.Responses.CartResponse;
 import com.e_com.CartService.Cart.Domain.Contracts.ICartService;
+import com.e_com.CartService.Cart.Domain.Models.Cart;
 import com.e_com.CartService.Shared.Application.Annotation.Auth.Authenticated;
 import com.e_com.CartService.Shared.Application.Auth.ContextHolder;
 import com.e_com.CartService.Shared.Infrastructure.Constants.Http;
@@ -29,54 +31,41 @@ import com.e_com.CartService.Shared.Infrastructure.Constants.Http;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/carts")
+@RequestMapping("/api/cart")
 @Authenticated
 public class CartController {
 
     @Autowired
     private ICartService cartService;
 
-    // GET /api/carts/me
-    @GetMapping("/me")
-    public ResponseEntity<CartResponse> getMyCart() {
+    // GET /api/cart
+    @Authenticated
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> getMyCart() {
+
         UUID userId = ContextHolder.getUser().getId();
+        Cart cart = cartService.getByUserId(userId);
 
-        CartResponse response = CartResponse.from(cartService.getByUserId(userId));
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
 
-        return ResponseEntity.status(Http.OK).body(response);
+        if (cart == null) {
+            response.put("cart", null);
+            response.put("message", "Cart is empty");
+        } else {
+            response.put("cart", CartResponse.from(cart));
+        }
+        return ResponseEntity.ok(response);
     }
 
-    // GET /api/carts/{id}
-    @GetMapping("/{id}")
-    public ResponseEntity<CartResponse> getById(@PathVariable UUID id) {
-        CartResponse response = CartResponse.from(cartService.getById(id));
 
-        return ResponseEntity.status(Http.OK).body(response);
-    }
-
-    // POST /api/carts
-    @PostMapping
-    public ResponseEntity<CartResponse> create() {
-        UUID userId = ContextHolder.getUser().getId();
-
-        CreateCartCommand command = new CreateCartCommand();
-        command.setUserId(userId);
-
-        CartResponse response = CartResponse.from(cartService.create(command));
-
-        return ResponseEntity.status(Http.CREATED).body(response);
-    }
-
-    // POST /api/carts/{id}/items
-    @PostMapping("/{id}/items")
-    public ResponseEntity<CartResponse> addItem(
-            @PathVariable UUID id,
-            @Valid @RequestBody AddItemRequest request) {
-
+    // POST /api/cart/items
+    @PostMapping("/items")
+    @Authenticated
+    public ResponseEntity<CartResponse> addItem(@Valid @RequestBody AddItemRequest request) {
         UUID userId = ContextHolder.getUser().getId();
 
         AddItemToCartCommand command = new AddItemToCartCommand();
-        command.setCartId(id);
         command.setUserId(userId);
         command.setProductVariantId(request.getProductVariantId());
         command.setQuantity(request.getQuantity());
@@ -86,17 +75,16 @@ public class CartController {
         return ResponseEntity.status(Http.OK).body(response);
     }
 
-    // PATCH /api/carts/{id}/items/{productVariantId}
-    @PatchMapping("/{id}/items/{productVariantId}")
+    // PATCH /api/cart/items/{productVariantId}
+    @Authenticated
+    @PatchMapping("/items/{productVariantId}")
     public ResponseEntity<CartResponse> updateItem(
-            @PathVariable UUID id,
             @PathVariable UUID productVariantId,
             @Valid @RequestBody UpdateItemRequest request) {
 
         UUID userId = ContextHolder.getUser().getId();
 
         UpdateCartItemCommand command = new UpdateCartItemCommand();
-        command.setCartId(id);
         command.setUserId(userId);
         command.setProductVariantId(productVariantId);
         command.setQuantity(request.getQuantity());
@@ -106,16 +94,13 @@ public class CartController {
         return ResponseEntity.status(Http.OK).body(response);
     }
 
-    // DELETE /api/carts/{id}/items/{productVariantId}
-    @DeleteMapping("/{id}/items/{productVariantId}")
-    public ResponseEntity<CartResponse> removeItem(
-            @PathVariable UUID id,
-            @PathVariable UUID productVariantId) {
-
+    // DELETE /api/cart/items/{productVariantId}
+    @Authenticated
+    @DeleteMapping("/items/{productVariantId}")
+    public ResponseEntity<CartResponse> removeItem(@PathVariable UUID productVariantId) {
         UUID userId = ContextHolder.getUser().getId();
 
         RemoveItemFromCartCommand command = new RemoveItemFromCartCommand();
-        command.setCartId(id);
         command.setUserId(userId);
         command.setProductVariantId(productVariantId);
 
@@ -124,13 +109,13 @@ public class CartController {
         return ResponseEntity.status(Http.OK).body(response);
     }
 
-    // POST /api/carts/{id}/checkout
-    @PostMapping("/{id}/checkout")
-    public ResponseEntity<CartResponse> checkout(@PathVariable UUID id) {
+    // POST /api/cart/checkout
+    @Authenticated
+    @PostMapping("/checkout")
+    public ResponseEntity<CartResponse> checkout() {
         UUID userId = ContextHolder.getUser().getId();
 
         CheckoutCartCommand command = new CheckoutCartCommand();
-        command.setCartId(id);
         command.setUserId(userId);
 
         CartResponse response = CartResponse.from(cartService.checkout(command));

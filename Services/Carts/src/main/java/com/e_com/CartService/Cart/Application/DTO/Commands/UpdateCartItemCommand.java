@@ -6,7 +6,6 @@ import lombok.Data;
 
 @Data
 public class UpdateCartItemCommand {
-    private UUID cartId;
     private UUID userId;
     private UUID productVariantId;
     private int quantity;

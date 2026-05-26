@@ -1,0 +1,44 @@
+services:
+  vendors-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vendors-service
+    ports:
+      - "8084:8084"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://vendors-db:5432/vendors_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_REDIS_HOST=host.docker.internal
+      - SPRING_REDIS_PORT=6379
+      - SPRING_RABBITMQ_HOST=host.docker.internal
+      - SPRING_RABBITMQ_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=guest
+      - SPRING_RABBITMQ_PASSWORD=guest
+    depends_on:
+      - vendors-db
+    networks:
+      - vendors-network
+
+  vendors-db:
+    image: postgres:16-alpine
+    container_name: vendors-db
+    environment:
+      - POSTGRES_DB=vendors_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5436:5432"
+    volumes:
+      - vendors-db-data:/var/lib/postgresql/data
+    networks:
+      - vendors-network
+
+
+volumes:
+  vendors-db-data:
+
+networks:
+  vendors-network:
+    driver: bridge

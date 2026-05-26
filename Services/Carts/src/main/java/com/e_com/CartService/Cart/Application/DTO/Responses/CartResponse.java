@@ -3,7 +3,7 @@ package com.e_com.CartService.Cart.Application.DTO.Responses;
 import java.util.List;
 import java.util.UUID;
 
-import com.e_com.CartService.Cart.Domain.Model.Cart;
+import com.e_com.CartService.Cart.Domain.Models.Cart;
 
 import lombok.Data;
 

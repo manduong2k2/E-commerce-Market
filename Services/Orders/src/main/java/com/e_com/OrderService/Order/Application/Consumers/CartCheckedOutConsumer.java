@@ -10,8 +10,8 @@ import com.e_com.OrderService.Order.Application.DTO.Commands.CreateOrderCommand;
 import com.e_com.OrderService.Order.Application.DTO.Messages.CartCheckedOutMessage;
 import com.e_com.OrderService.Order.Application.DTO.Messages.CartCheckedOutMessage.CartItemMessage;
 import com.e_com.OrderService.Order.Application.Services.OrderService;
-import com.e_com.OrderService.Order.Domain.Model.OrderItem;
-import com.e_com.OrderService.Order.Domain.Model.ProductSnapShot;
+import com.e_com.OrderService.Order.Domain.Models.OrderItem;
+import com.e_com.OrderService.Order.Domain.Models.ProductSnapShot;
 
 @Component
 public class CartCheckedOutConsumer {
@@ -24,39 +24,31 @@ public class CartCheckedOutConsumer {
 
     @RabbitListener(queues = "${rabbitmq.queues.cart-checked-out}")
     public void handle(CartCheckedOutMessage message) {
-        List<OrderItem> items = message.getItems().stream()
-                .map(this::toOrderItem)
-                .toList();
+        try {
+            System.out.println("consumed event cart checked out");
 
-        CreateOrderCommand command = new CreateOrderCommand();
-        command.setCartId(message.getCartId());
-        command.setUserId(message.getUserId());
-        command.setItems(items);
+            List<OrderItem> items = message.getItems().stream()
+                    .map(this::toOrderItem)
+                    .toList();
 
-        orderService.create(command);
+            CreateOrderCommand command = new CreateOrderCommand();
+            command.setCartId(message.getCartId());
+            command.setUserId(message.getUserId());
+            command.setItems(items);
+
+            orderService.create(command);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e; // hoặc log + ACK handling
+        }
     }
 
     private OrderItem toOrderItem(CartItemMessage itemMessage) {
         OrderItem item = new OrderItem(
-                itemMessage.getItemId(),
+                null,
                 itemMessage.getProductVariantId(),
-                itemMessage.getQuantity()
-        );
-
-        ProductSnapShot snapShot = new ProductSnapShot(
-                UUID.randomUUID(),
-                itemMessage.getProductId(),
-                itemMessage.getProductName(),
-                itemMessage.getProductCode(),
-                itemMessage.getBrand(),
-                itemMessage.getCategories(),
-                itemMessage.getVariantId(),
-                itemMessage.getPrice(),
-                itemMessage.getVariantCode(),
-                itemMessage.getVariantName()
-        );
-
-        item.setSnapShot(snapShot);
+                itemMessage.getQuantity());
         return item;
     }
 }

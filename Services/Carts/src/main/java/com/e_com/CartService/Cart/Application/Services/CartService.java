@@ -1,14 +1,14 @@
 package com.e_com.CartService.Cart.Application.Services;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.e_com.CartService.Cart.Application.DTO.Commands.AddItemToCartCommand;
 import com.e_com.CartService.Cart.Application.DTO.Commands.CheckoutCartCommand;
-import com.e_com.CartService.Cart.Application.DTO.Commands.CreateCartCommand;
 import com.e_com.CartService.Cart.Application.DTO.Commands.RemoveItemFromCartCommand;
 import com.e_com.CartService.Cart.Application.DTO.Commands.UpdateCartItemCommand;
 import com.e_com.CartService.Cart.Domain.Contracts.ICartRepository;
@@ -16,8 +16,9 @@ import com.e_com.CartService.Cart.Domain.Contracts.ICartService;
 import com.e_com.CartService.Cart.Domain.Events.CartCheckedOutEvent;
 import com.e_com.CartService.Cart.Domain.Events.CartCreatedEvent;
 import com.e_com.CartService.Cart.Domain.Events.CartItemAddedEvent;
-import com.e_com.CartService.Cart.Domain.Model.Cart;
-import com.e_com.CartService.Cart.Domain.Model.CartItem;
+import com.e_com.CartService.Cart.Domain.Models.Cart;
+import com.e_com.CartService.Cart.Domain.Models.CartItem;
+import com.e_com.CartService.Cart.Infrastructure.Config.CartQueueConfig;
 import com.e_com.CartService.Shared.Domain.AggregateRoot;
 import com.e_com.CartService.Shared.Domain.Contract.IEventPublisher;
 import com.e_com.CartService.Shared.Infrastructure.Event.EventOptions;
@@ -32,85 +33,87 @@ public class CartService implements ICartService {
     private IEventPublisher eventPublisher;
 
     @Override
-    public Cart create(CreateCartCommand command) {
-        Cart cart = new Cart(UUID.randomUUID(), command.getUserId());
-        repository.create(cart);
-
-        cart.addDomainEvent(new CartCreatedEvent(cart.getId(), cart.getUserId()));
-        publishDomainEvents(cart, "cart.created");
-
-        return cart;
-    }
-
-    @Override
     public Cart addItem(AddItemToCartCommand command) {
-        Cart cart = getById(command.getCartId());
+        Cart cart = repository.findByUserId(command.getUserId())
+                .orElseGet(() -> {
+                    try {
+                        Cart newCart = new Cart(null, command.getUserId());
+                        Cart saved = repository.create(newCart);
+                        saved.addDomainEvent(new CartCreatedEvent(saved.getId(), saved.getUserId()));
+                        publishDomainEvents(saved, CartQueueConfig.CART_CREATED);
+                        return saved;
+                    } catch (DataIntegrityViolationException e) {
+                        return repository.findByUserId(command.getUserId()).orElseThrow();
+                    }
+                });
 
         CartItem item = new CartItem(
-            UUID.randomUUID(),
-            command.getProductVariantId(),
-            command.getQuantity()
-        );
+                null,
+                command.getProductVariantId(),
+                command.getQuantity());
         cart.addItem(item);
-        repository.update(cart);
+        Cart updated = repository.update(cart);
 
-        cart.addDomainEvent(new CartItemAddedEvent(
-            cart.getId(),
-            command.getProductVariantId(),
-            command.getQuantity()
-        ));
-        publishDomainEvents(cart, "cart.item.added");
+        updated.addDomainEvent(new CartItemAddedEvent(
+                updated.getId(),
+                command.getProductVariantId(),
+                command.getQuantity()));
+        publishDomainEvents(updated, CartQueueConfig.CART_ITEM_ADDED);
 
-        return cart;
+        return updated;
     }
 
     @Override
     public Cart removeItem(RemoveItemFromCartCommand command) {
-        Cart cart = getById(command.getCartId());
+        Cart cart = getByUserId(command.getUserId());
         cart.removeItem(command.getProductVariantId());
-        repository.update(cart);
-        return cart;
+        return repository.update(cart);
     }
 
     @Override
     public Cart updateItem(UpdateCartItemCommand command) {
-        Cart cart = getById(command.getCartId());
+        Cart cart = getByUserId(command.getUserId());
         cart.updateItemQuantity(command.getProductVariantId(), command.getQuantity());
-        repository.update(cart);
-        return cart;
+        return repository.update(cart);
     }
 
     @Override
     public Cart checkout(CheckoutCartCommand command) {
-        Cart cart = getById(command.getCartId());
+        Cart cart = getByUserId(command.getUserId());
         cart.checkout();
-        repository.update(cart);
+        Cart updated = repository.update(cart);
 
-        cart.addDomainEvent(new CartCheckedOutEvent(
-            cart.getId(),
-            cart.getUserId()
-        ));
-        publishDomainEvents(cart, "cart.checked_out");
+        List<CartCheckedOutEvent.CartItemSnapshot> itemSnapshots = updated.getItems().stream()
+                .map(item -> new CartCheckedOutEvent.CartItemSnapshot(
+                        item.getId(),
+                        item.getProductVariantId(),
+                        item.getQuantity()))
+                .toList();
 
-        return cart;
+        updated.addDomainEvent(new CartCheckedOutEvent(
+                updated.getId(),
+                updated.getUserId(),
+                itemSnapshots));
+        publishDomainEvents(updated, CartQueueConfig.CART_CHECKED_OUT);
+
+        return updated;
     }
 
     @Override
     public Cart getByUserId(UUID userId) {
         return repository.findByUserId(userId)
-            .orElseThrow(() -> new IllegalArgumentException("Cart not found for user: " + userId));
+                .orElseThrow(() -> new IllegalArgumentException("Cart not found for user: " + userId));
     }
 
     @Override
     public Cart getById(UUID id) {
         return repository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Cart not found: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Cart not found: " + id));
     }
 
-    @Async
     private void publishDomainEvents(AggregateRoot<?> aggregate, String queue) {
         aggregate.getDomainEvents()
-            .forEach(event -> eventPublisher.publish(event, new EventOptions(queue, false)));
+                .forEach(event -> eventPublisher.publish(event, new EventOptions(queue, false)));
         aggregate.clearDomainEvents();
     }
 }

@@ -6,7 +6,6 @@ import lombok.Data;
 
 @Data
 public class RemoveItemFromCartCommand {
-    private UUID cartId;
     private UUID userId;
     private UUID productVariantId;
 }
