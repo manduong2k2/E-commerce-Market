@@ -32,7 +32,7 @@ public class VendorResponse {
         this.status         = vendor.getStatus();
         this.description    = vendor.getDescription();
         this.logo           = vendor.getLogo();
-        this.banner      = vendor.getBanner();
+        this.banner         = vendor.getBanner();
         this.taxCode        = vendor.getTaxCode();
         this.email          = vendor.getEmail();
         this.addressId      = vendor.getAddressId();
