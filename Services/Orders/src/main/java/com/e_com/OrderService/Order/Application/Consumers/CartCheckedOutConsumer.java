@@ -1,7 +1,6 @@
 package com.e_com.OrderService.Order.Application.Consumers;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
@@ -11,7 +10,6 @@ import com.e_com.OrderService.Order.Application.DTO.Messages.CartCheckedOutMessa
 import com.e_com.OrderService.Order.Application.DTO.Messages.CartCheckedOutMessage.CartItemMessage;
 import com.e_com.OrderService.Order.Application.Services.OrderService;
 import com.e_com.OrderService.Order.Domain.Models.OrderItem;
-import com.e_com.OrderService.Order.Domain.Models.ProductSnapShot;
 
 @Component
 public class CartCheckedOutConsumer {

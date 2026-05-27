@@ -68,7 +68,7 @@ public class GatewayRegistry {
                                         .bodyToMono(String.class)
                                         .block();
                         } catch (Exception ex) {
-                                System.err.println("Failed to register service: " + ex.getMessage());
+                                throw ex;
                         }
                 }
         }

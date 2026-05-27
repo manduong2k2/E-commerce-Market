@@ -5,40 +5,15 @@ services:
       dockerfile: Dockerfile
     container_name: orders-service
     ports:
-      - "8083:8083"
+      - "8085:8085"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://orders-db:5432/orders_db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/orders_db
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
-      - SPRING_REDIS_HOST=host.docker.internal
+      - SPRING_DATA_REDIS_HOST=host.docker.internal
       - SPRING_REDIS_PORT=6379
       - SPRING_RABBITMQ_HOST=host.docker.internal
       - SPRING_RABBITMQ_PORT=5672
       - SPRING_RABBITMQ_USERNAME=guest
       - SPRING_RABBITMQ_PASSWORD=guest
-    depends_on:
-      - orders-db
-    networks:
-      - orders-network
-
-  orders-db:
-    image: postgres:16-alpine
-    container_name: orders-db
-    environment:
-      - POSTGRES_DB=orders_db
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    ports:
-      - "5435:5432"
-    volumes:
-      - orders-db-data:/var/lib/postgresql/data
-    networks:
-      - orders-network
-
-
-volumes:
-  orders-db-data:
-
-networks:
-  orders-network:
-    driver: bridge
+      - SPRING_APPLICATION_GATEWAY_ADMIN_URL=http://host.docker.internal:8001

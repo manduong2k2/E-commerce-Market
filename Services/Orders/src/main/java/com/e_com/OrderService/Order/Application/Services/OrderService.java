@@ -11,7 +11,6 @@ import com.e_com.OrderService.Order.Application.DTO.Commands.CreateOrderCommand;
 import com.e_com.OrderService.Order.Application.DTO.Responses.OrderResponse;
 import com.e_com.OrderService.Order.Domain.Constants.OrderStatusEnum;
 import com.e_com.OrderService.Order.Domain.Contracts.IOrderRepository;
-import com.e_com.OrderService.Order.Domain.Events.OrderCreatedEvent;
 import com.e_com.OrderService.Order.Domain.Models.Order;
 import com.e_com.OrderService.Shared.Domain.Contract.IEventPublisher;
 import com.e_com.OrderService.Shared.Infrastructure.Event.EventOptions;
